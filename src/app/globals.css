@@ -20,7 +20,7 @@
   --accent: #fb7185;
 }
 
-@theme inline {
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary-dark: var(--primary-dark);
@@ -37,6 +37,18 @@ body {
   color: var(--foreground);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
+}
+
+/* Fix for auth pages to prevent scrolling */
+.auth-page {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 /* Custom scrollbar */
@@ -94,6 +106,12 @@ html {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
 }
 
 .animate-fade-in-up {
