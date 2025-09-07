@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Search, Plus, Check, Pin, Zap } from 'lucide-react';
+import { Search, Plus, Check, Pin } from 'lucide-react';
 
 export default function InstallationSteps() {
   const ref = useRef(null);
@@ -48,7 +48,15 @@ export default function InstallationSteps() {
   ];
 
   return (
-    <section ref={ref} className="py-20 bg-white">
+    <section 
+      ref={ref} 
+      className="py-16 md:py-20 relative" 
+      style={{ background: 'var(--background)', zIndex: 0 }}
+      id="installation-steps-section"
+    >
+      {/* Top divider */}
+      <div className="section-divider fancy mb-16"></div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -57,10 +65,10 @@ export default function InstallationSteps() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-primary-dark font-poppins mb-6">
-            Get Started in <span className="text-primary-medium">5 Simple Steps</span>
+          <h2 className="text-4xl md:text-5xl font-bold font-poppins mb-6" style={{ color: 'var(--primary-dark)' }}>
+            Get Started in <span style={{ color: 'var(--primary-medium)' }}>5 Simple Steps</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl max-w-3xl mx-auto leading-relaxed" style={{ color: 'var(--foreground)' }}>
             Install the Decypher extension and start simplifying complex documents in minutes
           </p>
         </motion.div>
@@ -76,44 +84,107 @@ export default function InstallationSteps() {
               return (
                 <motion.div
                   key={step.number}
-                  initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                  animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.8 }}
-                  transition={{ 
-                    duration: 0.6, 
-                    delay: index * 0.2,
-                    type: "spring",
-                    stiffness: 100
-                  }}
+                  initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                  animate={isInView ? 
+                    { 
+                      opacity: 1, 
+                      y: 0,
+                      scale: 1,
+                      transition: {
+                        type: "spring",
+                        stiffness: 70,
+                        damping: 15,
+                        delay: index * 0.2,
+                        duration: 0.8
+                      }
+                    } : 
+                    { opacity: 0, y: 30, scale: 0.9 }
+                  }
                   whileHover={{ 
                     scale: 1.05,
-                    transition: { duration: 0.3 }
+                    y: -8,
+                    boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.1)",
+                    transition: { duration: 0.3, type: "spring", stiffness: 400 }
                   }}
                   className="relative z-10"
                 >
-                  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group">
+                  <div 
+                    style={{ 
+                      background: 'var(--background)',
+                      borderColor: 'color-mix(in oklab, var(--foreground) 10%, transparent)'
+                    }} 
+                    className="rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border group"
+                  >
                     {/* Step Number */}
-                    <div className="flex items-center justify-center mb-4">
+                    <motion.div 
+                      className="flex items-center justify-center mb-4"
+                      initial={{ rotate: -5 }}
+                      animate={{ rotate: 0 }}
+                      transition={{ 
+                        delay: index * 0.3 + 0.5, 
+                        type: "spring", 
+                        stiffness: 200 
+                      }}
+                    >
                       <div className={`relative ${step.color} rounded-full p-4 shadow-lg`}>
-                        <div className="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>
-                        <div className="relative bg-white rounded-full w-12 h-12 flex items-center justify-center">
+                        <motion.div 
+                          className="absolute inset-0 bg-white/20 rounded-full"
+                          animate={{ 
+                            scale: [1, 1.2, 1],
+                            opacity: [0.5, 0.8, 0.5]
+                          }}
+                          transition={{ 
+                            duration: 3, 
+                            repeat: Infinity,
+                            delay: index * 0.4 
+                          }}
+                        ></motion.div>
+                        <motion.div 
+                          className="relative bg-white rounded-full w-12 h-12 flex items-center justify-center"
+                          whileHover={{ 
+                            rotate: [0, -5, 5, 0],
+                            transition: { duration: 0.5 }
+                          }}
+                        >
                           <span className="text-lg font-bold text-primary-dark">{step.number}</span>
-                        </div>
+                        </motion.div>
                       </div>
-                    </div>
+                    </motion.div>
 
                     {/* Icon */}
-                    <div className="flex justify-center mb-4">
+                    <motion.div 
+                      className="flex justify-center mb-4"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ 
+                        delay: index * 0.3 + 0.8,
+                        duration: 0.5,
+                        type: "spring",
+                        stiffness: 200
+                      }}
+                    >
                       <div className="bg-primary-light rounded-xl p-3 group-hover:bg-primary-medium/20 transition-colors duration-300">
-                        <Icon className="h-6 w-6 text-primary-medium" />
+                        <motion.div
+                          whileHover={{ rotate: 15 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <Icon className="h-6 w-6 text-primary-medium" />
+                        </motion.div>
                       </div>
-                    </div>
+                    </motion.div>
 
                     {/* Content */}
                     <div className="text-center space-y-2">
-                      <h3 className="text-lg font-semibold text-primary-dark font-poppins">
+                      <h3 
+                        className="text-lg font-semibold font-poppins"
+                        style={{ color: 'var(--primary-dark)' }}
+                      >
                         {step.title}
                       </h3>
-                      <p className="text-gray-600 text-sm leading-relaxed">
+                      <p 
+                        className="text-sm leading-relaxed"
+                        style={{ color: 'var(--foreground)' }}
+                      >
                         {step.description}
                       </p>
                     </div>
@@ -133,35 +204,11 @@ export default function InstallationSteps() {
           </div>
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
-          className="text-center mt-16"
-        >
-          <div className="bg-gradient-to-r from-primary-medium to-primary-dark rounded-2xl p-8 text-white">
-            <div className="flex items-center justify-center mb-4">
-              <Zap className="h-8 w-8 text-primary-light mr-3" />
-              <h3 className="text-2xl font-bold font-poppins">
-                Ready to Install?
-              </h3>
-            </div>
-            <p className="text-primary-light mb-6 max-w-2xl mx-auto">
-              Join thousands of users who have already simplified their complex documents. 
-              The extension is free and takes less than 2 minutes to install.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-primary-dark hover:bg-primary-light px-8 py-3 rounded-lg font-semibold transition-colors duration-300 flex items-center justify-center space-x-2">
-                <span>Install Extension</span>
-                <Zap className="h-4 w-4" />
-              </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-primary-dark px-8 py-3 rounded-lg font-semibold transition-all duration-300">
-                View on Chrome Store
-              </button>
-            </div>
-          </div>
-        </motion.div>
+        {/* Bottom divider for better section separation */}
+        <div className="section-divider fancy mt-16"></div>
+        
+        {/* Clear fixing element to ensure proper content flow */}
+        <div className="clear-both h-4"></div>
       </div>
     </section>
   );

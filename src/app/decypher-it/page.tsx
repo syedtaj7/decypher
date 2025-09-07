@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, FileText, BarChart3, CheckCircle, XCircle, Download, Share2 } from 'lucide-react';
+import { BarChart3, CheckCircle, XCircle, Download, Share2 } from 'lucide-react';
 
 export default function DecypherItPage() {
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
@@ -206,7 +206,7 @@ export default function DecypherItPage() {
                   <div className="flex items-center mb-6">
                     <CheckCircle className="h-6 w-6 text-green-500 mr-3" />
                     <h3 className="text-2xl font-semibold text-primary-dark">
-                      Do's
+                      Do&apos;s
                     </h3>
                   </div>
                   <ul className="space-y-3">
@@ -230,7 +230,7 @@ export default function DecypherItPage() {
                   <div className="flex items-center mb-6">
                     <XCircle className="h-6 w-6 text-red-500 mr-3" />
                     <h3 className="text-2xl font-semibold text-primary-dark">
-                      Don'ts
+                      Don&apos;ts
                     </h3>
                   </div>
                   <ul className="space-y-3">
