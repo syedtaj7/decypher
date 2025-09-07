@@ -31,7 +31,6 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Home', href: '/' },
     { name: 'Decypher It', href: '/decypher-it' },
     { name: 'AI Assist', href: '/ai-assist' },
-    { name: 'Simplify', href: '/simplify' },
     ...(user ? [{ name: 'Settings', href: '/settings' }] : []),
   ];
 

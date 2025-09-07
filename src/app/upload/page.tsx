@@ -96,9 +96,9 @@ export default function UploadPage() {
         setUploadComplete(true);
         setIsUploading(false);
         
-        // Redirect to simplify page after completion
+        // Redirect to decypher-it page after completion
         setTimeout(() => {
-          router.push('/simplify?fileId=123'); // Replace with actual file ID
+          router.push('/decypher-it'); // Redirect to decypher-it instead
         }, 1500); // Wait 1.5 seconds before redirecting
       }
     }, interval);

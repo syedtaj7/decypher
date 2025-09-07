@@ -12,7 +12,6 @@ export default function Footer() {
     product: [
       { name: 'Decypher It', href: '/decypher-it' },
       { name: 'AI Assist', href: '/ai-assist' },
-      { name: 'Simplify', href: '/simplify' },
       { name: 'Upload', href: '/upload' },
     ],
     company: [
