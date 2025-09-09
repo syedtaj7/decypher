@@ -15,7 +15,11 @@ import {
   ArrowLeft,
   MoveLeft,
   Maximize2,
-  X
+  X,
+  Sparkles,
+  Zap,
+  Shield,
+  FileBadge
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
@@ -288,6 +292,24 @@ async function analyzePdfWithGemini(pdfUrl: string, platformName: string): Promi
   }
 }
 
+// Animation variants for consistent animations
+// We use these in our components below
+const slideUp = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3
+    }
+  }
+};
+
 // Full screen PDF viewer component
 const FullScreenPdfViewer = ({ url, isOpen, onClose }: { url: string, isOpen: boolean, onClose: () => void }) => {
   return (
@@ -297,13 +319,14 @@ const FullScreenPdfViewer = ({ url, isOpen, onClose }: { url: string, isOpen: bo
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-4"
         >
           <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="w-full h-full max-w-6xl max-h-[90vh] bg-white rounded-2xl overflow-hidden flex flex-col"
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="w-full h-full max-w-6xl max-h-[90vh] bg-white rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-purple-100"
           >
             <div className="flex justify-between items-center p-4 bg-gray-100">
               <h3 className="font-bold text-lg">Terms & Conditions</h3>
@@ -337,8 +360,8 @@ export default function DecypherItPage() {
   const [filteredPlatforms, setFilteredPlatforms] = useState(platforms);
   const [showFullScreenPdf, setShowFullScreenPdf] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult | null>(null);
-  // const [highlightedRisk, setHighlightedRisk] = useState<number | null>(null); // For future risk highlighting feature
   const [activeTab, setActiveTab] = useState('risks');
+  const [completedPlatforms, setCompletedPlatforms] = useState<string[]>([]);
 
   // Find the selected platform data
   const selectedPlatformData = platforms.find(p => p.id === selectedPlatform);
@@ -415,120 +438,250 @@ export default function DecypherItPage() {
     setFilteredPlatforms(platforms);
   };
 
+  // Handle completed platforms - move to top of the list
+  const markPlatformAsCompleted = (platformId: string) => {
+    // Only add if not already completed
+    if (!completedPlatforms.includes(platformId)) {
+      setCompletedPlatforms(prev => [platformId, ...prev]);
+    }
+    
+    // Reorder filteredPlatforms to show completed ones at the top
+    const reorderedPlatforms = [...platforms];
+    const completed = reorderedPlatforms.filter(p => [...completedPlatforms, platformId].includes(p.id));
+    const notCompleted = reorderedPlatforms.filter(p => ![...completedPlatforms, platformId].includes(p.id));
+    
+    setFilteredPlatforms([...completed, ...notCompleted]);
+  };
+
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-b from-[#F9F8FF] to-[#F2F0FF] pt-16 pb-12">
-        {/* Background decorative elements */}
+        {/* Enhanced Background decorative elements */}
         <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
           <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-[#F2F0FF] via-transparent to-transparent"></div>
+          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-purple-400/10 to-indigo-400/5 blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-gradient-to-tr from-indigo-300/10 to-purple-400/5 blur-3xl"></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-          {/* Header */}
+          {/* Enhanced Header */}
           {!showPdfPreview && !showResults && (
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ 
+                duration: 0.8, 
+                type: "spring",
+                stiffness: 100
+              }}
               className="text-center mb-12 pt-12"
             >
-              <h1 className="text-4xl md:text-5xl font-bold text-[#6B57E6] font-poppins mb-4">
-                Decypher <span className="text-[#8C7FF8]">It</span>
-              </h1>
-              <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mb-4">
+                  <Sparkles className="w-4 h-4 mr-1" /> AI-Powered Analysis
+                </span>
+              </motion.div>
+              
+              <motion.h1 
+                className="text-5xl md:text-6xl font-bold font-poppins mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.7 }}
+              >
+                <span className="text-[#6B57E6]">Decypher</span>{" "}
+                <span className="relative">
+                  <span className="text-[#8C7FF8]">It</span>
+                  <motion.span 
+                    className="absolute -bottom-2 left-0 w-full h-3 bg-gradient-to-r from-indigo-300/30 to-purple-300/30 rounded-full" 
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ delay: 0.6, duration: 0.7 }}
+                  />
+                </span>
+              </motion.h1>
+              
+              <motion.p 
+                className="text-xl text-gray-700 max-w-3xl mx-auto mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.7 }}
+              >
                 Select from our collection of Terms & Conditions to see Decypher in action. 
                 Get instant flowcharts, summaries, and actionable insights.
-              </p>
+              </motion.p>
 
-              {/* Search Bar */}
+              {/* Enhanced Search Bar with Animation */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="max-w-md mx-auto mt-8 relative"
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="max-w-2xl mx-auto mt-8 relative"
               >
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <motion.input
-                    whileFocus={{ scale: 1.02, boxShadow: '0 4px 20px rgba(140, 127, 248, 0.15)' }}
-                    transition={{ duration: 0.3 }}
-                    type="text"
-                    placeholder="Search platforms..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#8C7FF8] focus:outline-none focus:ring-2 focus:ring-[#8C7FF8]/20 transition-all duration-300"
-                  />
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+                  <div className="relative bg-white rounded-xl">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-500 h-5 w-5" />
+                    <motion.input
+                      whileFocus={{ scale: 1.02, boxShadow: '0 8px 25px rgba(140, 127, 248, 0.2)' }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      type="text"
+                      placeholder="Search platforms..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-12 pr-14 py-4 rounded-xl border border-gray-200 bg-white/90 backdrop-blur-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 transition-all duration-300 text-lg"
+                    />
+                    {searchQuery && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-gray-100"
+                        onClick={() => setSearchQuery('')}
+                      >
+                        <X className="h-4 w-4 text-gray-400" />
+                      </motion.button>
+                    )}
+                  </div>
                 </div>
+                
+                {filteredPlatforms.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center mt-4 text-indigo-600"
+                  >
+                    No platforms match your search
+                  </motion.div>
+                )}
               </motion.div>
             </motion.div>
           )}
 
-          {/* Back Button for PDF Preview and Results */}
+          {/* Enhanced Back Button for PDF Preview and Results */}
           {(showPdfPreview || showResults) && (
             <motion.button
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ 
+                duration: 0.5,
+                type: "spring", 
+                stiffness: 300,
+                damping: 25
+              }}
               onClick={() => showResults ? handleReset() : setShowPdfPreview(false)}
-              className="flex items-center space-x-2 text-[#6B57E6] font-medium mt-8 hover:text-[#5A48D3] transition-colors duration-300"
+              className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-3 rounded-xl text-indigo-600 font-medium mt-8 hover:bg-indigo-50 transition-all duration-300 shadow-sm border border-indigo-100"
             >
               <ArrowLeft className="h-5 w-5" />
               <span>{showResults ? "Start Over" : "Back to Platforms"}</span>
             </motion.button>
           )}
 
-          {/* PDF Preview */}
+          {/* Enhanced PDF Preview */}
           <AnimatePresence>
             {showPdfPreview && selectedPlatformData && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.5 }}
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300, 
+                  damping: 25,
+                  duration: 0.5
+                }}
                 className="my-8"
               >
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-                  {/* Platform Header */}
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-indigo-100">
+                  {/* Enhanced Platform Header */}
                   <div 
-                    className="p-6 flex items-center space-x-4" 
-                    style={{ backgroundColor: selectedPlatformData.bgColor }}
+                    className="py-6 px-8 flex flex-wrap md:flex-nowrap items-center gap-6" 
+                    style={{ 
+                      background: `linear-gradient(120deg, ${selectedPlatformData.bgColor}, white)`,
+                      borderBottom: `1px solid ${selectedPlatformData.bgColor}`
+                    }}
                   >
                     <motion.div 
-                      whileHover={{ scale: 1.05, rotate: 5 }}
+                      whileHover={{ scale: 1.1, rotate: 10 }}
                       transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      className="h-16 w-16 flex items-center justify-center rounded-full"
-                      style={{ backgroundColor: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                      className="h-20 w-20 flex items-center justify-center rounded-2xl"
+                      style={{ 
+                        backgroundColor: 'white', 
+                        boxShadow: `0 8px 20px ${selectedPlatformData.color}30`
+                      }}
                     >
                       <Image 
                         src={selectedPlatformData.icon || `/images/platforms/${selectedPlatformData.id}.svg`} 
                         alt={selectedPlatformData.name}
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 object-contain"
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 object-contain"
                       />
                     </motion.div>
-                    <div>
-                      <h2 className="text-2xl font-bold" style={{ color: selectedPlatformData.color }}>
+                    
+                    <div className="flex-1">
+                      <motion.h2 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.4 }}
+                        className="text-3xl font-bold mb-1" 
+                        style={{ color: selectedPlatformData.color }}
+                      >
                         {selectedPlatformData.name}
-                      </h2>
-                      <p className="text-gray-600">{selectedPlatformData.description}</p>
+                      </motion.h2>
+                      <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.4 }}
+                        className="text-gray-600"
+                      >
+                        {selectedPlatformData.description}
+                      </motion.p>
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4, duration: 0.4 }}
+                        className="flex gap-3 mt-3"
+                      >
+                        <span className="text-xs px-3 py-1 rounded-full bg-indigo-100 text-indigo-600 font-medium">
+                          <FileBadge className="inline-block w-3 h-3 mr-1" />
+                          PDF Document
+                        </span>
+                        <span className="text-xs px-3 py-1 rounded-full bg-purple-100 text-purple-600 font-medium">
+                          <Shield className="inline-block w-3 h-3 mr-1" />
+                          Terms & Conditions
+                        </span>
+                      </motion.div>
                     </div>
-                    <div className="ml-auto">
+                    
+                    <div className="flex gap-3">
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, backgroundColor: '#f9f9f9' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setShowFullScreenPdf(true)}
-                        className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:bg-white/50 transition-colors"
+                        className="flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-700 bg-white shadow-sm border border-gray-100 transition-all"
                       >
                         <Maximize2 className="h-5 w-5" />
                         <span className="hidden sm:inline">Full Screen</span>
                       </motion.button>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-700 bg-white shadow-sm border border-gray-100 transition-all"
+                      >
+                        <Download className="h-5 w-5" />
+                        <span className="hidden sm:inline">Download</span>
+                      </motion.button>
                     </div>
                   </div>
                   
-                  {/* PDF Viewer */}
-                  <div className="relative bg-gray-100">
-                    <div className="h-[600px] overflow-auto">
+                  {/* Enhanced PDF Viewer */}
+                  <div className="relative bg-gray-50 border-t border-gray-100">
+                    <div className="h-[650px] overflow-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
                       <iframe
                         src={`${selectedPlatformData.pdfPath}#view=FitH&toolbar=0&navpanes=1`}
                         className="w-full h-full"
@@ -536,22 +689,49 @@ export default function DecypherItPage() {
                       ></iframe>
                     </div>
                     
-                    {/* Overlay with analyze button */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-end p-8 bg-gradient-to-t from-gray-900/70 to-transparent">
-                      <p className="text-white text-lg mb-4 text-center max-w-md">
-                        Ready to analyze this document and get insights?
-                      </p>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleAnalyzeDocument}
-                        className="bg-[#8C7FF8] hover:bg-[#6B57E6] text-white px-8 py-4 rounded-xl font-bold text-lg transition-colors duration-300 flex items-center space-x-3 shadow-lg"
+                    {/* Enhanced overlay with analyze button */}
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6, duration: 0.8 }}
+                      className="absolute inset-0 flex flex-col items-center justify-end p-8 bg-gradient-to-t from-indigo-900/80 via-indigo-900/50 to-transparent backdrop-blur-sm"
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8, duration: 0.6 }}
+                        className="max-w-xl text-center"
                       >
-                        <FileText className="h-5 w-5" />
+                        <div className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-md rounded-full mb-6 text-white">
+                          <Sparkles className="h-4 w-4 mr-2 text-indigo-200" /> 
+                          AI-Powered Analysis
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-4">
+                          Ready to decode {selectedPlatformData.name}&apos;s Terms & Conditions?
+                        </h3>
+                        <p className="text-white/90 text-lg mb-6 max-w-md mx-auto">
+                          Our AI will analyze the document and provide you with key insights, risks, and actionable recommendations.
+                        </p>
+                      </motion.div>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05, boxShadow: '0 15px 25px rgba(80, 60, 240, 0.4)' }}
+                        whileTap={{ scale: 0.98 }}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 1, type: "spring" }}
+                        onClick={() => {
+                          handleAnalyzeDocument();
+                          // Mark as completed after analysis
+                          markPlatformAsCompleted(selectedPlatformData.id);
+                        }}
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center space-x-3 shadow-lg"
+                      >
+                        <Zap className="h-5 w-5" />
                         <span>Analyze Document</span>
                         <ChevronRight className="h-5 w-5" />
                       </motion.button>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>
@@ -567,101 +747,281 @@ export default function DecypherItPage() {
             />
           )}
 
-          {/* Platform Grid */}
+          {/* Enhanced Platform Grid with completion status */}
           <AnimatePresence>
             {!showPdfPreview && !showResults && (
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
                 className="mb-12"
               >
                 {filteredPlatforms.length === 0 ? (
-                  <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
-                    <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-xl font-medium text-gray-700">No platforms match your search</h3>
-                    <p className="text-gray-500 mt-2">Try another search term</p>
-                  </div>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center py-20 px-6 bg-white rounded-3xl shadow-lg border border-gray-100"
+                  >
+                    <div className="mx-auto w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mb-6">
+                      <FileText className="h-10 w-10 text-gray-300" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-700 mb-3">No platforms match your search</h3>
+                    <p className="text-gray-500 mb-6 max-w-md mx-auto">Try adjusting your search terms or browse our complete collection below</p>
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="px-6 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl font-medium transition-colors duration-300"
+                    >
+                      Show all platforms
+                    </button>
+                  </motion.div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredPlatforms.map((platform, index) => (
-                      <motion.button
-                        key={platform.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
-                        whileHover={{ y: -5, boxShadow: '0 10px 25px rgba(140, 127, 248, 0.15)' }}
-                        onClick={() => handlePlatformSelect(platform.id)}
-                        className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 text-left flex flex-col h-full border border-gray-100"
-                      >
-                        <div className="flex items-center mb-4">
-                          <div 
-                            className="h-12 w-12 rounded-full flex items-center justify-center mr-4"
-                            style={{ backgroundColor: platform.bgColor || '#F2F0FF' }}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    {filteredPlatforms.map((platform, index) => {
+                      const isCompleted = completedPlatforms.includes(platform.id);
+                      return (
+                        <motion.div
+                          key={platform.id}
+                          variants={slideUp}
+                          custom={index}
+                          transition={{ 
+                            duration: 0.5, 
+                            delay: 0.1 + index * 0.05,
+                            type: "spring",
+                            stiffness: 100,
+                            damping: 20
+                          }}
+                          className={`relative ${isCompleted ? 'order-first' : ''}`}
+                        >
+                          {/* Completion badge */}
+                          {isCompleted && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.5 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="absolute -top-3 -right-3 z-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full p-1.5 shadow-lg"
+                            >
+                              <CheckCircle className="h-5 w-5 text-white" />
+                            </motion.div>
+                          )}
+                          
+                          <motion.button
+                            whileHover={{ y: -8, scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            transition={{ 
+                              type: "spring", 
+                              stiffness: 400, 
+                              damping: 15 
+                            }}
+                            onClick={() => handlePlatformSelect(platform.id)}
+                            className={`bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 text-left flex flex-col h-full border ${
+                              isCompleted 
+                                ? 'border-green-200 ring-1 ring-green-100' 
+                                : 'border-gray-100 hover:border-indigo-100'
+                            } w-full group overflow-hidden`}
                           >
-                            <Image
-                              src={platform.icon || `/images/platforms/${platform.id}.svg`}
-                              alt={platform.name}
-                              width={24}
-                              height={24}
-                              className="h-6 w-6 object-contain"
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-bold text-gray-800">{platform.name}</h3>
-                            <p className="text-sm text-gray-500">{platform.description}</p>
-                          </div>
-                        </div>
-                        <div className="mt-auto pt-4 flex justify-end">
-                          <div className="flex items-center text-[#8C7FF8] font-medium text-sm">
-                            <span>View Document</span>
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </div>
-                        </div>
-                      </motion.button>
-                    ))}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            <div className="relative">
+                              {/* Platform Card Header */}
+                              <div className="flex items-start mb-4">
+                                <motion.div 
+                                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                                  transition={{ duration: 0.5 }}
+                                  className={`h-14 w-14 rounded-xl flex items-center justify-center mr-4 shadow-md`}
+                                  style={{ 
+                                    backgroundColor: platform.bgColor || '#F2F0FF',
+                                    boxShadow: `0 4px 12px ${platform.bgColor}80 || rgba(242, 240, 255, 0.5)`
+                                  }}
+                                >
+                                  <Image
+                                    src={platform.icon || `/images/platforms/${platform.id}.svg`}
+                                    alt={platform.name}
+                                    width={28}
+                                    height={28}
+                                    className="h-7 w-7 object-contain"
+                                  />
+                                </motion.div>
+                                
+                                <div className="flex-1">
+                                  <div className="flex justify-between items-start">
+                                    <h3 className="font-bold text-lg text-gray-800">{platform.name}</h3>
+                                    {isCompleted && (
+                                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                                        Analyzed
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-sm text-gray-500">{platform.description}</p>
+                                </div>
+                              </div>
+                              
+                              {/* Bottom action button */}
+                              <div className="mt-auto pt-4 flex justify-between items-center">
+                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                  isCompleted ? 'bg-green-50 text-green-600' : 'bg-indigo-50 text-indigo-600'
+                                }`}>
+                                  {isCompleted ? 'Results Available' : 'PDF Document'}
+                                </span>
+                                
+                                <div className={`flex items-center font-medium text-sm ${
+                                  isCompleted ? 'text-green-600' : 'text-indigo-600'
+                                }`}>
+                                  <span>{isCompleted ? 'View Results' : 'Analyze Document'}</span>
+                                  <motion.div
+                                    animate={{ x: [0, 5, 0] }}
+                                    transition={{ 
+                                      repeat: Infinity, 
+                                      repeatType: "reverse",
+                                      duration: 1.5,
+                                      repeatDelay: 1
+                                    }}
+                                  >
+                                    <ChevronRight className="h-4 w-4 ml-1" />
+                                  </motion.div>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.button>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Processing State */}
+          {/* Enhanced Processing State */}
           <AnimatePresence>
             {isProcessing && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                className="py-16 flex justify-center"
+                className="fixed inset-0 bg-indigo-900/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
               >
-                <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full text-center">
-                  <div className="relative mx-auto mb-6 w-24 h-24">
-                    <div className="absolute inset-0 rounded-full border-4 border-[#F2F0FF]"></div>
-                    <div className="absolute inset-0 rounded-full border-4 border-t-[#8C7FF8] animate-spin"></div>
-                    <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center">
-                      <FileText className="h-8 w-8 text-[#8C7FF8]" />
-                    </div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  className="bg-white rounded-2xl p-10 shadow-2xl max-w-lg w-full text-center relative overflow-hidden"
+                >
+                  {/* Animated background gradient */}
+                  <div className="absolute inset-0 overflow-hidden -z-10">
+                    <motion.div 
+                      animate={{ 
+                        rotate: 360,
+                        scale: [1, 1.2, 1],
+                      }} 
+                      transition={{ 
+                        rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                        scale: { duration: 8, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" } 
+                      }}
+                      className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-gradient-conic from-indigo-500/5 via-purple-500/10 to-indigo-500/5 opacity-30"
+                    />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3">
-                    AI is Processing...
-                  </h3>
-                  <div className="space-y-4 max-w-xs mx-auto">
-                    <p className="text-gray-600">
-                      Our AI is analyzing the document to extract key information and insights
-                    </p>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
+                  
+                  {/* Processing Animation */}
+                  <div className="relative mx-auto mb-8">
+                    <motion.div 
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                      className="w-32 h-32"
+                    >
+                      <div className="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
+                      <div className="absolute inset-0 rounded-full border-4 border-t-indigo-600 border-r-indigo-400"></div>
+                      
+                      {/* Orbiting Dots */}
+                      <motion.div 
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0"
+                        style={{ transformOrigin: "center" }}
+                      >
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-purple-500 rounded-full shadow-lg"></div>
+                      </motion.div>
+                      
+                      <motion.div 
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0"
+                        style={{ transformOrigin: "center" }}
+                      >
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-indigo-400 rounded-full shadow-lg"></div>
+                      </motion.div>
+                      
+                      {/* Center Icon */}
+                      <div className="absolute inset-8 rounded-full bg-white border border-indigo-100 shadow-inner flex items-center justify-center">
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <Sparkles className="h-8 w-8 text-indigo-500" />
+                        </motion.div>
+                      </div>
+                    </motion.div>
+                  </div>
+                  
+                  <motion.h3 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-3"
+                  >
+                    AI Analysis in Progress
+                  </motion.h3>
+                  
+                  <div className="space-y-6 max-w-sm mx-auto">
+                    <motion.p 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                      className="text-gray-600"
+                    >
+                      Our AI is analyzing the document to extract key insights, identify potential risks, and generate actionable recommendations.
+                    </motion.p>
+                    
+                    {/* Processing steps */}
+                    <div className="space-y-3 mt-6 text-left">
+                      {[
+                        { text: "Extracting key terms & conditions", delay: 0.6 },
+                        { text: "Identifying potential risks", delay: 1.2 },
+                        { text: "Generating insights & recommendations", delay: 1.8 },
+                        { text: "Preparing visual summaries", delay: 2.4 }
+                      ].map((step, index) => (
+                        <motion.div 
+                          key={index}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: step.delay }}
+                          className="flex items-center"
+                        >
+                          <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center mr-3 flex-shrink-0">
+                            <motion.div
+                              animate={{ opacity: [0.5, 1, 0.5] }}
+                              transition={{ duration: 1.5, repeat: Infinity, delay: index * 0.3 }}
+                              className="w-2 h-2 rounded-full bg-indigo-600"
+                            />
+                          </div>
+                          <span className="text-sm text-gray-600">{step.text}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                    
+                    {/* Progress bar */}
+                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: "0%" }}
                         animate={{ width: "100%" }}
-                        transition={{ duration: 3 }}
-                        className="bg-[#8C7FF8] h-1.5 rounded-full"
+                        transition={{ duration: 6 }}
+                        className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
                       ></motion.div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -707,75 +1067,150 @@ export default function DecypherItPage() {
                 transition={{ duration: 0.6 }}
                 className="space-y-8 mb-12"
               >
-                {/* Results Header */}
+                {/* Enhanced Results Header */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="bg-white rounded-2xl shadow-lg p-8"
+                  transition={{ duration: 0.6, type: "spring" }}
+                  className="bg-white rounded-2xl shadow-xl p-8 border border-indigo-100"
                 >
+                  {/* Success banner */}
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4 mb-6 text-white flex items-start"
+                  >
+                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                      <CheckCircle className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Analysis Complete!</h3>
+                      <p className="text-sm text-white/90">We&apos;ve successfully analyzed {selectedPlatformData.name}&apos;s Terms & Conditions</p>
+                    </div>
+                    <button className="ml-auto text-white/80 hover:text-white">
+                      <X className="h-5 w-5" />
+                    </button>
+                  </motion.div>
+                  
                   <div className="flex flex-col md:flex-row md:items-center gap-6">
                     <motion.div 
                       initial={{ scale: 0.8, rotate: -5 }}
                       animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                      className="h-16 w-16 flex-shrink-0 rounded-xl flex items-center justify-center"
+                      transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.2 }}
+                      className="h-20 w-20 flex-shrink-0 rounded-2xl flex items-center justify-center relative group"
                       style={{ backgroundColor: selectedPlatformData.bgColor }}
                     >
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/80 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <Image 
                         src={selectedPlatformData.icon} 
                         alt={selectedPlatformData.name}
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 object-contain"
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 object-contain relative z-10"
+                      />
+                      <motion.div
+                        animate={{ 
+                          boxShadow: ['0px 0px 0px 0px rgba(140, 127, 248, 0)', '0px 0px 20px 10px rgba(140, 127, 248, 0.3)', '0px 0px 0px 0px rgba(140, 127, 248, 0)'] 
+                        }}
+                        transition={{ duration: 3, repeat: Infinity }}
+                        className="absolute inset-0 rounded-2xl"
                       />
                     </motion.div>
+                    
                     <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-gray-800 mb-1">
-                        {selectedPlatformData.name} - Analysis Results
-                      </h2>
-                      <p className="text-gray-600">{analysisResults.summary}</p>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        <div className="flex items-center mb-2">
+                          <h2 className="text-3xl font-bold text-gray-800">
+                            {selectedPlatformData.name} - Analysis Results
+                          </h2>
+                          <span className="ml-3 px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700 uppercase tracking-wide">
+                            Completed
+                          </span>
+                        </div>
+                        <p className="text-gray-600 text-lg">{analysisResults.summary}</p>
+                      </motion.div>
+                      
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="flex gap-4 mt-3 flex-wrap"
+                      >
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                          <FileText className="h-3 w-3 mr-1" /> Terms Analysis
+                        </span>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                          <Shield className="h-3 w-3 mr-1" /> {analysisResults.risks.length} Potential Risks
+                        </span>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                          <AlertTriangle className="h-3 w-3 mr-1" /> {analysisResults.donts.length} Warnings
+                        </span>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <BarChart3 className="h-3 w-3 mr-1" /> {analysisResults.flowchart.length} Key Points
+                        </span>
+                      </motion.div>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    
+                    <motion.div 
+                      className="flex flex-col sm:flex-row gap-3"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
                       <motion.button 
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, boxShadow: '0 8px 25px rgba(140, 127, 248, 0.3)' }}
                         whileTap={{ scale: 0.95 }}
-                        className="bg-[#8C7FF8] hover:bg-[#6B57E6] text-white px-6 py-3 rounded-lg font-medium transition-colors duration-300 flex items-center justify-center space-x-2 shadow-sm"
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg"
                       >
                         <Download className="h-4 w-4" />
                         <span>Export PDF</span>
                       </motion.button>
                       <motion.button 
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, backgroundColor: '#F4F2FF' }}
                         whileTap={{ scale: 0.95 }}
-                        className="border-2 border-[#8C7FF8] text-[#8C7FF8] hover:bg-[#F2F0FF] px-6 py-3 rounded-lg font-medium transition-colors duration-300 flex items-center justify-center space-x-2"
+                        className="border-2 border-indigo-400 text-indigo-600 hover:bg-indigo-50 px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center space-x-2"
                       >
                         <Share2 className="h-4 w-4" />
                         <span>Share</span>
                       </motion.button>
-                    </div>
+                    </motion.div>
                   </div>
                   
-                  {/* Tab Navigation */}
-                  <div className="mt-8 border-b border-gray-200">
-                    <div className="flex space-x-8">
-                      {['risks', 'flowchart', 'guidelines'].map((tab) => (
+                  {/* Enhanced Tab Navigation */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.5 }}
+                    className="mt-10 border-b border-gray-200"
+                  >
+                    <div className="flex flex-wrap space-x-1 sm:space-x-3 md:space-x-8">
+                      {[
+                        { id: 'risks', label: 'Risk Assessment', icon: <AlertTriangle className="h-4 w-4" /> },
+                        { id: 'flowchart', label: 'Document Flowchart', icon: <BarChart3 className="h-4 w-4" /> },
+                        { id: 'guidelines', label: "Do's & Don'ts", icon: <CheckCircle className="h-4 w-4" /> }
+                      ].map((tab) => (
                         <motion.button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={`pb-2 font-medium text-sm transition-colors duration-200 ${
-                            activeTab === tab ? 'text-[#6B57E6] border-b-2 border-[#6B57E6]' : 'text-gray-500 hover:text-gray-700'
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id)}
+                          className={`pb-3 font-medium text-sm transition-all duration-300 flex items-center px-4 ${
+                            activeTab === tab.id 
+                              ? 'text-indigo-600 border-b-2 border-indigo-600' 
+                              : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-200'
                           }`}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          {tab === 'risks' && 'Risk Assessment'}
-                          {tab === 'flowchart' && 'Document Flowchart'}
-                          {tab === 'guidelines' && "Do's & Don'ts"}
+                          <span className="mr-2">{tab.icon}</span>
+                          {tab.label}
                         </motion.button>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
 
                 {/* Risk Assessment */}
