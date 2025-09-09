@@ -4,16 +4,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary-dark: #1D3557;
-  --primary-medium: #457B9D;
-  --primary-light: #F1FAEE;
-  --accent: #E63946;
+  --primary-dark: #6B57E6; /* Darker purple */
+  --primary-medium: #8C7FF8; /* Main purple */
+  --primary-light: #F2F0FF; /* Light purple background */
+  --accent: #E63980; /* Pink accent */
   
   /* RGB versions for opacity adjustments */
-  --primary-medium-rgb: 69, 123, 157;
-  --primary-dark-rgb: 29, 53, 87;
-  --primary-light-rgb: 241, 250, 238;
-  --accent-rgb: 230, 57, 70;
+  --primary-medium-rgb: 140, 127, 248;
+  --primary-dark-rgb: 107, 87, 230;
+  --primary-light-rgb: 242, 240, 255;
+  --accent-rgb: 230, 57, 128;
   --background-rgb: 255, 255, 255;
   --foreground-rgb: 23, 23, 23;
 }
@@ -22,16 +22,16 @@
 [data-theme='dark'] {
   --background: #0b0b0f;
   --foreground: #e5e7eb;
-  --primary-dark: #0b4a6f;
-  --primary-medium: #0ea5e9;
-  --primary-light: #1f2937;
-  --accent: #fb7185;
+  --primary-dark: #4F3FC1; /* Darker purple for dark mode */
+  --primary-medium: #9B8BFF; /* Brighter purple for dark mode */
+  --primary-light: #1E1A2E; /* Very dark purple background */
+  --accent: #FF6CAD; /* Brighter pink for dark mode */
   
   /* RGB versions for dark mode */
-  --primary-medium-rgb: 14, 165, 233;
-  --primary-dark-rgb: 11, 74, 111;
-  --primary-light-rgb: 31, 41, 55;
-  --accent-rgb: 251, 113, 133;
+  --primary-medium-rgb: 155, 139, 255;
+  --primary-dark-rgb: 79, 63, 193;
+  --primary-light-rgb: 30, 26, 46;
+  --accent-rgb: 255, 108, 173;
   --background-rgb: 11, 11, 15;
   --foreground-rgb: 229, 231, 235;
 }

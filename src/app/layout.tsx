@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Roboto, Poppins } from "next/font/google";
 import "./globals.css";
-import Layout from "@/components/Layout";
 import { AuthProvider } from "@/lib/authContext";
 
 const inter = Inter({
@@ -44,9 +43,7 @@ export default function RootLayout({
         className={`${inter.variable} ${roboto.variable} ${poppins.variable} antialiased`}
       >
         <AuthProvider>
-          <Layout>
-            {children}
-          </Layout>
+          {children}
         </AuthProvider>
       </body>
     </html>

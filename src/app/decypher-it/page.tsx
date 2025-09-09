@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart3, CheckCircle, XCircle, Download, Share2 } from 'lucide-react';
+import Layout from '@/components/Layout';
 
 export default function DecypherItPage() {
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
@@ -64,8 +65,9 @@ export default function DecypherItPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-0 pb-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Layout>
+      <div className="min-h-screen bg-gray-50 pt-0 pb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -267,6 +269,7 @@ export default function DecypherItPage() {
         </AnimatePresence>
       </div>
     </div>
+    </Layout>
   );
 }
 

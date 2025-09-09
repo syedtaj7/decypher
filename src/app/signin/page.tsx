@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { auth } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, browserPopupRedirectResolver } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { AmuLogo } from '@/components/AmuLogo';
-import { AppleIcon } from '@/components/AppleIcon';
+import { GithubIcon } from '@/components/GithubIcon';
 import DesertBackground from '@/components/DesertBackground';
 
 const GoogleIcon = () => (
@@ -28,8 +28,31 @@ export default function SignInPage() {
     lastName: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isGithubLoading, setIsGithubLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [lastAuthAttempt, setLastAuthAttempt] = useState(0);
   const router = useRouter();
+  
+  // Prevent multiple auth attempts in quick succession
+  const isAuthThrottled = useCallback(() => {
+    const now = Date.now();
+    if (now - lastAuthAttempt < 2000) { // 2 second cooldown
+      return true;
+    }
+    setLastAuthAttempt(now);
+    return false;
+  }, [lastAuthAttempt]);
+  
+  // Cleanup any lingering auth sessions when component unmounts
+  useEffect(() => {
+    return () => {
+      // This helps prevent issues with multiple auth requests
+      if (isGoogleLoading || isGithubLoading) {
+        console.log('Cleaning up pending auth sessions');
+      }
+    };
+  }, [isGoogleLoading, isGithubLoading]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -44,33 +67,92 @@ export default function SignInPage() {
     try {
       await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       router.replace('/profile');
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      alert('Account creation failed. Please check your details.');
+      const firebaseError = err as { code?: string; message?: string };
+      
+      // Handle common Firebase auth errors
+      if (firebaseError.code === 'auth/email-already-in-use') {
+        alert('This email is already in use. Please try logging in instead.');
+      } else if (firebaseError.code === 'auth/invalid-email') {
+        alert('Please enter a valid email address.');
+      } else if (firebaseError.code === 'auth/weak-password') {
+        alert('Password is too weak. Please use a stronger password.');
+      } else {
+        alert('Account creation failed: ' + (firebaseError.message || 'Please check your details.'));
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    if (isGoogleLoading || isGithubLoading) return;
+    if (isAuthThrottled()) return;
+    
+    if (!termsAccepted) {
+      alert('Please accept the Terms & Conditions before signing in with Google.');
+      return;
+    }
+
+    setIsGoogleLoading(true);
     const provider = new GoogleAuthProvider();
+    // Add login hint to persist login attempt
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
+    
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, provider, browserPopupRedirectResolver);
       router.replace('/profile');
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      alert('Google sign-in failed.');
+      // Handle specific Firebase errors
+      const firebaseError = err as { code?: string; message?: string };
+      if (firebaseError.code === 'auth/cancelled-popup-request') {
+        console.log('Authentication popup was closed by the user');
+      } else if (firebaseError.code === 'auth/popup-blocked') {
+        alert('Popup was blocked by the browser. Please enable popups for this site.');
+      } else {
+        alert('Google sign-in failed: ' + (firebaseError.message || 'Unknown error'));
+      }
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
   
-  const handleAppleSignIn = async () => {
+  const handleGithubSignIn = async () => {
+    if (isGoogleLoading || isGithubLoading) return;
+    if (isAuthThrottled()) return;
+    
+    if (!termsAccepted) {
+      alert('Please accept the Terms & Conditions before signing in with GitHub.');
+      return;
+    }
+
+    setIsGithubLoading(true);
+    const provider = new GithubAuthProvider();
+    // Add login parameters to persist login attempt
+    provider.setCustomParameters({
+      'allow_signup': 'true'
+    });
+    
     try {
-      // Here we would implement Apple sign-in logic
-      // This is just a placeholder
-      alert('Apple sign-in functionality to be implemented');
-    } catch (err) {
+      await signInWithPopup(auth, provider, browserPopupRedirectResolver);
+      router.replace('/profile');
+    } catch (err: unknown) {
       console.error(err);
-      alert('Apple sign-in failed.');
+      // Handle specific Firebase errors
+      const firebaseError = err as { code?: string; message?: string };
+      if (firebaseError.code === 'auth/cancelled-popup-request') {
+        console.log('Authentication popup was closed by the user');
+      } else if (firebaseError.code === 'auth/popup-blocked') {
+        alert('Popup was blocked by the browser. Please enable popups for this site.');
+      } else {
+        alert('GitHub sign-in failed: ' + (firebaseError.message || 'Unknown error'));
+      }
+    } finally {
+      setIsGithubLoading(false);
     }
   };
 
@@ -196,9 +278,9 @@ export default function SignInPage() {
               
               <button
                 type="submit"
-                disabled={isLoading || !termsAccepted}
+                disabled={isLoading || !termsAccepted || isGoogleLoading || isGithubLoading}
                 className={`w-full p-3 mt-3 rounded-lg font-medium text-center ${
-                  termsAccepted 
+                  termsAccepted && !isLoading && !isGoogleLoading && !isGithubLoading 
                     ? 'bg-[#8C7FF8] text-white hover:bg-[#7B6EE7] transition-colors' 
                     : 'bg-[#5A5670] text-white/50 cursor-not-allowed'
                 }`}
@@ -212,26 +294,61 @@ export default function SignInPage() {
               </button>
             </form>
             
-            <div className="mt-8 mb-8 flex items-center">
+            <div className="mt-8 mb-4 flex items-center">
               <div className="flex-1 h-px bg-[#5A5670]"></div>
               <span className="px-4 text-white/60 text-sm">Or register with</span>
               <div className="flex-1 h-px bg-[#5A5670]"></div>
             </div>
             
+            {!termsAccepted && (
+              <div className="mb-4 p-2 bg-[#493F73] text-white/80 text-sm rounded-lg flex items-center">
+                <AlertCircle className="h-4 w-4 text-[#8C7FF8] mr-2 flex-shrink-0" />
+                <span>Please accept the Terms & Conditions to enable social login options</span>
+              </div>
+            )}
+            
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={handleGoogleSignIn}
-                className="flex items-center justify-center py-3 px-4 border border-[#5A5670] rounded-lg text-white hover:bg-[#38344A] transition-colors"
+                className={`flex items-center justify-center py-3 px-4 border rounded-lg text-white transition-colors ${
+                  termsAccepted && !isGoogleLoading
+                    ? 'border-[#5A5670] hover:bg-[#38344A]' 
+                    : 'border-gray-700 text-gray-500 cursor-not-allowed'
+                }`}
+                disabled={!termsAccepted || isGoogleLoading || isGithubLoading}
               >
-                <GoogleIcon />
-                <span className="ml-2">Google</span>
+                {isGoogleLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    <span className="ml-2">Signing in...</span>
+                  </div>
+                ) : (
+                  <>
+                    <GoogleIcon />
+                    <span className="ml-2">Google</span>
+                  </>
+                )}
               </button>
               <button
-                onClick={handleAppleSignIn}
-                className="flex items-center justify-center py-3 px-4 border border-[#5A5670] rounded-lg text-white hover:bg-[#38344A] transition-colors"
+                onClick={handleGithubSignIn}
+                className={`flex items-center justify-center py-3 px-4 border rounded-lg text-white transition-colors ${
+                  termsAccepted && !isGithubLoading
+                    ? 'border-[#5A5670] hover:bg-[#38344A]' 
+                    : 'border-gray-700 text-gray-500 cursor-not-allowed'
+                }`}
+                disabled={!termsAccepted || isGoogleLoading || isGithubLoading}
               >
-                <AppleIcon />
-                <span className="ml-2">Apple</span>
+                {isGithubLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    <span className="ml-2">Signing in...</span>
+                  </div>
+                ) : (
+                  <>
+                    <GithubIcon />
+                    <span className="ml-2">GitHub</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

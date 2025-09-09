@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, FileText, Send, Bot, User, Download, Share2, X } from 'lucide-react';
+import Layout from '@/components/Layout';
 
 interface Message {
   id: string;
@@ -107,8 +108,9 @@ export default function AiAssistPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-0 pb-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Layout>
+      <div className="min-h-screen bg-gray-50 pt-0 pb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -333,6 +335,7 @@ export default function AiAssistPage() {
         )}
       </div>
     </div>
+    </Layout>
   );
 }
 
