@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#1976d2] via-[#1e88e5] to-[#42a5f5] py-16 md:py-24">
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#5E35B1] via-[#7B1FA2] to-[#9575CD] py-16 md:py-24">
       {/* Animated background elements */}
       <motion.div 
         initial={{ opacity: 0 }}
@@ -81,7 +81,7 @@ export default function HeroSection() {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Link 
                   href="/decypher-it" 
-                  className="bg-[#1565c0] hover:bg-[#0d47a1] text-white px-8 py-3 rounded-md font-semibold text-lg transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl"
+                  className="bg-[#4527A0] hover:bg-[#311B92] text-white px-8 py-3 rounded-md font-semibold text-lg transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl"
                 >
                   Try Decypher
                 </Link>
@@ -96,7 +96,7 @@ export default function HeroSection() {
               >
                 <Link 
                   href="/extension" 
-                  className="bg-white text-[#1976d2] px-8 py-3 rounded-md font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                  className="bg-white text-[#5E35B1] px-8 py-3 rounded-md font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                 >
                   <motion.div
                     animate={{ y: [0, -3, 0] }}
@@ -122,7 +122,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 0.7, scale: 1 }}
               transition={{ duration: 1, delay: 1.2 }}
-              className="absolute -left-4 top-1/2 w-8 h-8 bg-blue-200/40 rounded-full blur-sm z-0"
+              className="absolute -left-4 top-1/2 w-8 h-8 bg-purple-200/40 rounded-full blur-sm z-0"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
@@ -132,7 +132,7 @@ export default function HeroSection() {
                 scale: { duration: 1, delay: 1.5 },
                 y: { repeat: Infinity, duration: 5, ease: "easeInOut" }
               }}
-              className="absolute -right-6 bottom-1/3 w-10 h-10 bg-blue-100/30 rounded-full blur-sm z-0"
+              className="absolute -right-6 bottom-1/3 w-10 h-10 bg-purple-100/30 rounded-full blur-sm z-0"
             />
             
             {/* Robot container with float animation */}
@@ -158,7 +158,7 @@ export default function HeroSection() {
                 }}
               >
                 {/* Light glow behind robot */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-blue-400/20 rounded-full blur-2xl z-0"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-purple-400/20 rounded-full blur-2xl z-0"></div>
                 
                 <Image
                   src="/robot1.png"
