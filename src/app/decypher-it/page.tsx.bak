@@ -15,6 +15,11 @@ import {
   ArrowLeft,
   MoveLeft,
   Maximize2,
+  Sparkles,
+  Zap,
+  RefreshCw,
+  Shield,
+  MousePointerClick,
   X
 } from 'lucide-react';
 import Layout from '@/components/Layout';
@@ -124,10 +129,7 @@ const platforms = [
 ];
 
 // Gemini API integration
-// API key for Gemini API access
-import { GoogleGenerativeAI } from '@google/generative-ai';
 const GEMINI_API_KEY = 'AIzaSyBjCBj-TtFmbfuOCgVQ9Fy3I4JN4nxWd_0';
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 interface AnalysisResult {
   summary: string;
@@ -148,112 +150,22 @@ interface AnalysisResult {
 
 async function analyzePdfWithGemini(pdfUrl: string, platformName: string): Promise<AnalysisResult | null> {
   try {
-    // For demo purposes, we'll create a prompt to analyze terms and conditions
+    const prompt = `Analyze the Terms & Conditions for ${platformName} and provide a structured analysis with the following sections:
+    1. A short summary of the document (max 50 words)
+    2. A flowchart of key points in the document (at least 6 points)
+    3. Risk assessment (at least 4 risks with levels: High, Medium, or Low)
+    4. A list of do's (5 items)
+    5. A list of don'ts (5 items)
+    
+    Format the response as JSON with these keys: summary, flowchart (array of objects with id, title, description, type where type is one of: requirement, right, warning, limitation, info), risks (array of objects with title, level, description), dos (array of strings), donts (array of strings).`;
+
     // In a real implementation, you would extract text from the PDF and send it to Gemini
+    // This is a simulation that returns the predefined data for now
     
-    // Create the Gemini model instance
-    // Using the correct model ID format for Google Generative AI API
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    // Simulating an API call to Gemini
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    const prompt = `
-    You are an AI legal assistant specialized in analyzing Terms & Conditions documents for ${platformName}.
-    
-    Please analyze the Terms & Conditions for ${platformName} and provide a structured analysis with the following components:
-    
-    1. A concise summary (1-2 sentences) of the main points covered in the terms.
-    
-    2. A flowchart of 6 key points in the document, each with:
-       - A title
-       - A short description
-       - A type (choose from: requirement, right, warning, limitation, info)
-    
-    3. List 4 potential risks for users, each with:
-       - A title
-       - A risk level (High, Medium, or Low)
-       - A short description of the risk
-    
-    4. Five practical recommendations for what users SHOULD do (Dos)
-    
-    5. Five practical recommendations for what users SHOULD NOT do (Don'ts)
-    
-    Format your response as a structured JSON object with these exact fields:
-    {
-      "summary": "string",
-      "flowchart": [
-        {
-          "id": number,
-          "title": "string",
-          "description": "string", 
-          "type": "string"
-        }
-      ],
-      "risks": [
-        {
-          "title": "string",
-          "level": "string",
-          "description": "string"
-        }
-      ],
-      "dos": ["string"],
-      "donts": ["string"]
-    }
-    `;
-
-    // Generate content using the model
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const textResponse = response.text();
-    
-    // Parse the JSON response - we extract the JSON part in case the model returns any extra text
-    const jsonMatch = textResponse.match(/{[\s\S]*}/);
-    if (!jsonMatch) {
-      throw new Error('Failed to get JSON response from Gemini API');
-    }
-    
-    // Define types for the JSON response
-    interface FlowchartItem {
-      id?: number;
-      title: string;
-      description: string;
-      type: string;
-    }
-    
-    interface RiskItem {
-      title: string;
-      level: string;
-      description: string;
-    }
-    
-    interface GeminiResponse {
-      summary: string;
-      flowchart: FlowchartItem[];
-      risks: RiskItem[];
-      dos: string[];
-      donts: string[];
-    }
-    
-    const jsonResponse = JSON.parse(jsonMatch[0]) as GeminiResponse;
-    
-    // Map the response to our AnalysisResult interface
-    return {
-      summary: jsonResponse.summary,
-      flowchart: jsonResponse.flowchart.map((item, index) => ({
-        ...item,
-        id: item.id || index + 1 // Ensure ID exists
-      })),
-      risks: jsonResponse.risks,
-      dos: jsonResponse.dos,
-      donts: jsonResponse.donts
-    };
-
-  } catch (error) {
-    console.error("Error analyzing PDF with Gemini:", error);
-    
-    // Show the specific error to help with debugging
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Gemini API Error: ${errorMessage}`);
-    
-    // Return fallback data so the application doesn't break
+    // Return sample data for demo purposes
     return {
       summary: `${platformName}'s terms outline user rights, content ownership, data collection practices, and community guidelines with important privacy implications.`,
       flowchart: [
@@ -285,6 +197,10 @@ async function analyzePdfWithGemini(pdfUrl: string, platformName: string): Promi
         "Don't use the platform for illegal activities"
       ]
     };
+
+  } catch (error) {
+    console.error("Error analyzing PDF with Gemini:", error);
+    return null;
   }
 }
 
@@ -337,7 +253,7 @@ export default function DecypherItPage() {
   const [filteredPlatforms, setFilteredPlatforms] = useState(platforms);
   const [showFullScreenPdf, setShowFullScreenPdf] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult | null>(null);
-  // const [highlightedRisk, setHighlightedRisk] = useState<number | null>(null); // For future risk highlighting feature
+  const [highlightedRisk, setHighlightedRisk] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState('risks');
 
   // Find the selected platform data
@@ -361,14 +277,11 @@ export default function DecypherItPage() {
     setShowPdfPreview(true);
   };
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  
   const handleAnalyzeDocument = async () => {
     if (!selectedPlatformData) return;
     
     setShowPdfPreview(false);
     setIsProcessing(true);
-    setErrorMessage(null);
     
     try {
       // Call Gemini API
@@ -377,33 +290,13 @@ export default function DecypherItPage() {
         selectedPlatformData.name
       );
       
-      if (!results) {
-        throw new Error("Failed to analyze the document. Please try again.");
-      }
-      
       setAnalysisResults(results);
       setIsProcessing(false);
       setShowResults(true);
     } catch (error) {
       console.error("Error analyzing document:", error);
       setIsProcessing(false);
-      
-      // Format a user-friendly error message
-      let userMessage = "An unexpected error occurred while analyzing the document.";
-      
-      if (error instanceof Error) {
-        // For debugging in console
-        console.error(`Error details: ${error.message}`);
-        
-        // Check for common API errors
-        if (error.message.includes("404") && error.message.includes("model")) {
-          userMessage = "The AI model is currently unavailable. Please try again later.";
-        } else if (error.message.includes("403") || error.message.includes("401") || error.message.includes("API key")) {
-          userMessage = "Authentication error with the AI service. Please check your API key.";
-        }
-      }
-      
-      setErrorMessage(userMessage);
+      // Handle error
     }
   };
 
@@ -413,6 +306,39 @@ export default function DecypherItPage() {
     setShowResults(false);
     setSearchQuery('');
     setFilteredPlatforms(platforms);
+  };
+
+  // Example results - in a real app this would come from the Gemini API
+  const results = {
+    summary: "This document outlines the terms of service and privacy policy for users. It covers user rights, content ownership, data collection practices, and community guidelines.",
+    flowchart: [
+      { id: 1, title: "Account Creation", description: "You must be 13+ years old to create an account", type: "requirement" },
+      { id: 2, title: "Content Ownership", description: "You retain rights to your content but grant a license to the platform", type: "right" },
+      { id: 3, title: "Data Collection", description: "Platform collects personal data, device information, and usage patterns", type: "warning" },
+      { id: 4, title: "Content Moderation", description: "Platform can remove content that violates guidelines", type: "limitation" },
+      { id: 5, title: "Account Termination", description: "Platform can suspend accounts for violations", type: "warning" },
+      { id: 6, title: "Third-Party Services", description: "Platform integrates with third-party services that may collect data", type: "info" }
+    ],
+    risks: [
+      { title: "Data Privacy", level: "High", description: "Your personal data may be used for targeted advertising" },
+      { title: "Content Rights", level: "Medium", description: "Platform gains non-exclusive license to your content" },
+      { title: "Account Control", level: "Medium", description: "Platform can terminate accounts at their discretion" },
+      { title: "Data Retention", level: "Low", description: "Data may be stored even after account deletion" }
+    ],
+    dos: [
+      "Read privacy settings carefully and adjust accordingly",
+      "Keep personal information private when possible",
+      "Report inappropriate content or behavior",
+      "Use strong, unique passwords for your account",
+      "Review third-party app permissions regularly"
+    ],
+    donts: [
+      "Don't share sensitive personal information publicly",
+      "Don't post content that violates community guidelines",
+      "Don't create fake accounts or impersonate others",
+      "Don't engage in harassment or bullying",
+      "Don't use the platform for illegal activities"
+    ]
   };
 
   return (
@@ -554,18 +480,10 @@ export default function DecypherItPage() {
                     </div>
                   </div>
                 </div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Full Screen PDF Viewer */}
-          {selectedPlatformData && (
-            <FullScreenPdfViewer
-              url={selectedPlatformData.pdfPath}
-              isOpen={showFullScreenPdf}
-              onClose={() => setShowFullScreenPdf(false)}
-            />
-          )}
 
           {/* Platform Grid */}
           <AnimatePresence>
@@ -666,41 +584,9 @@ export default function DecypherItPage() {
             )}
           </AnimatePresence>
 
-          {/* Error Message */}
-          <AnimatePresence>
-            {errorMessage && !isProcessing && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-                className="py-8 flex justify-center"
-              >
-                <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg max-w-2xl w-full">
-                  <div className="flex items-start">
-                    <AlertTriangle className="h-6 w-6 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="text-lg font-medium text-red-800 mb-1">
-                        Analysis Failed
-                      </h3>
-                      <p className="text-red-700">{errorMessage}</p>
-                      <button
-                        onClick={handleReset}
-                        className="mt-4 text-red-700 font-medium hover:text-red-800 flex items-center"
-                      >
-                        <ArrowLeft className="h-4 w-4 mr-1" />
-                        Try Again
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Results */}
           <AnimatePresence>
-            {showResults && selectedPlatformData && analysisResults && (
+            {showResults && selectedPlatformData && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -734,7 +620,7 @@ export default function DecypherItPage() {
                       <h2 className="text-2xl font-bold text-gray-800 mb-1">
                         {selectedPlatformData.name} - Analysis Results
                       </h2>
-                      <p className="text-gray-600">{analysisResults.summary}</p>
+                      <p className="text-gray-600">{analysisResults?.summary || results.summary}</p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <motion.button 
@@ -791,7 +677,7 @@ export default function DecypherItPage() {
                       <h3 className="text-2xl font-bold text-gray-800">Risk Assessment</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {analysisResults.risks.map((risk, index) => (
+                      {(analysisResults?.risks || results.risks).map((risk, index) => (
                         <motion.div
                           key={index}
                           initial={{ opacity: 0, y: 10 }}
@@ -838,7 +724,7 @@ export default function DecypherItPage() {
                     <div className="relative">
                       <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-                        {analysisResults.flowchart.map((item, index) => (
+                        {(analysisResults?.flowchart || results.flowchart).map((item, index) => (
                           <motion.div
                             key={item.id}
                             initial={{ opacity: 0, y: 10 }}
@@ -917,7 +803,7 @@ export default function DecypherItPage() {
                         <h3 className="text-2xl font-bold text-gray-800">Do&apos;s</h3>
                       </div>
                       <ul className="space-y-4">
-                        {analysisResults.dos.map((item, index) => (
+                        {(analysisResults?.dos || results.dos).map((item, index) => (
                           <motion.li
                             key={index}
                             initial={{ opacity: 0, x: -10 }}
@@ -947,7 +833,7 @@ export default function DecypherItPage() {
                         <h3 className="text-2xl font-bold text-gray-800">Don&apos;ts</h3>
                       </div>
                       <ul className="space-y-4">
-                        {analysisResults.donts.map((item, index) => (
+                        {(analysisResults?.donts || results.donts).map((item, index) => (
                           <motion.li
                             key={index}
                             initial={{ opacity: 0, x: -10 }}
@@ -987,3 +873,4 @@ export default function DecypherItPage() {
     </Layout>
   );
 }
+
