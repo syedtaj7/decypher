@@ -30,7 +30,7 @@ const platforms = [
     id: 'instagram',
     name: 'Instagram',
     description: 'Terms of Service and Privacy Policy',
-    icon: '/images/platforms/instagram.svg',
+    icon: '/images/icons/instagram.png',
     pdfPath: '/Tnc/Instagram_TnC.pdf',
     color: '#E1306C',
     bgColor: '#FCEEF3'
@@ -39,7 +39,7 @@ const platforms = [
     id: 'linkedin',
     name: 'LinkedIn',
     description: 'User Agreement and Privacy Policy',
-    icon: '/images/platforms/linkedin.svg',
+    icon: '/images/icons/linkedin.png',
     pdfPath: '/Tnc/Linkedin_TnC.pdf',
     color: '#0A66C2',
     bgColor: '#E8F1FA'
@@ -48,16 +48,16 @@ const platforms = [
     id: 'meta',
     name: 'Meta',
     description: 'Terms of Service and Data Policy',
-    icon: '/images/platforms/meta.svg',
+    icon: '/images/icons/meta.png',
     pdfPath: '/Tnc/Meta_TnC.pdf',
     color: '#0668E1',
     bgColor: '#E5F0FD'
   },
   {
     id: 'openai',
-    name: 'OpenAI',
+    name: 'OpenAI (ChatGPT)',
     description: 'Terms of Use and Privacy Policy',
-    icon: '/images/platforms/openai.svg',
+    icon: '/images/icons/chatgpt.png',
     pdfPath: '/Tnc/OpenAI_TnC.pdf',
     color: '#10A37F',
     bgColor: '#E7F6F2'
@@ -66,7 +66,7 @@ const platforms = [
     id: 'pinterest',
     name: 'Pinterest',
     description: 'Terms of Service and Privacy Policy',
-    icon: '/images/platforms/pinterest.svg',
+    icon: '/images/icons/pinterest.png',
     pdfPath: '/Tnc/Pinterest_TnC.pdf',
     color: '#E60023',
     bgColor: '#FDECEE'
@@ -75,7 +75,7 @@ const platforms = [
     id: 'reddit',
     name: 'Reddit',
     description: 'User Agreement and Privacy Policy',
-    icon: '/images/platforms/reddit.svg',
+    icon: '/images/icons/reddit.png',
     pdfPath: '/Tnc/Reddit_TnC.pdf',
     color: '#FF4500',
     bgColor: '#FFEFE9'
@@ -84,7 +84,7 @@ const platforms = [
     id: 'snapchat',
     name: 'Snapchat',
     description: 'Terms of Service and Privacy Policy',
-    icon: '/images/platforms/snapchat.svg',
+    icon: '/images/icons/snapchat.png',
     pdfPath: '/Tnc/Snapchat_TnC.pdf',
     color: '#FFFC00',
     bgColor: '#FFFDE5'
@@ -93,7 +93,7 @@ const platforms = [
     id: 'telegram',
     name: 'Telegram',
     description: 'Terms of Service and Privacy Policy',
-    icon: '/images/platforms/telegram.svg',
+    icon: '/images/icons/telegram.png',
     pdfPath: '/Tnc/Telegram_TnC.pdf',
     color: '#26A5E4',
     bgColor: '#EAF6FC'
@@ -102,7 +102,7 @@ const platforms = [
     id: 'whatsapp',
     name: 'WhatsApp',
     description: 'Terms of Service and Privacy Notice',
-    icon: '/images/platforms/whatsapp.svg',
+    icon: '/images/icons/whatsapp.png',  // Using PNG version for consistency with other icons
     pdfPath: '/Tnc/Whatsapp_TnC.pdf',
     color: '#25D366',
     bgColor: '#EAFAF1'
@@ -111,7 +111,7 @@ const platforms = [
     id: 'twitter',
     name: 'X (Twitter)',
     description: 'Terms of Service and Privacy Policy',
-    icon: '/images/platforms/x.svg',
+    icon: '/images/icons/twitter.png',
     pdfPath: '/Tnc/X_TnC.pdf',
     color: '#000000',
     bgColor: '#F0F0F0'
@@ -120,7 +120,7 @@ const platforms = [
     id: 'youtube',
     name: 'YouTube',
     description: 'Terms of Service and Privacy Policy',
-    icon: '/images/platforms/youtube.svg',
+    icon: '/images/icons/youtube.png',
     pdfPath: '/Tnc/Youtube_TnC.pdf',
     color: '#FF0000',
     bgColor: '#FEE6E6'
@@ -128,9 +128,12 @@ const platforms = [
 ];
 
 // Gemini API integration
-// API key for Gemini API access
 import { GoogleGenerativeAI } from '@google/generative-ai';
-const GEMINI_API_KEY = 'AIzaSyBjCBj-TtFmbfuOCgVQ9Fy3I4JN4nxWd_0';
+// Get API key from environment variable
+const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+if (!GEMINI_API_KEY) {
+  console.error('Gemini API key is missing. Please add NEXT_PUBLIC_GEMINI_API_KEY to your .env.local file.');
+}
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 interface AnalysisResult {
@@ -148,6 +151,17 @@ interface AnalysisResult {
   }[];
   dos: string[];
   donts: string[];
+  // Add these for our export function
+  keyPoints?: {
+    title: string;
+    description: string;
+    type?: string;
+  }[];
+  privacyConcerns?: {
+    title: string;
+    level: string;
+    description: string;
+  }[];
 }
 
 async function analyzePdfWithGemini(pdfUrl: string, platformName: string): Promise<AnalysisResult | null> {
@@ -296,7 +310,13 @@ async function analyzePdfWithGemini(pdfUrl: string, platformName: string): Promi
 // We use these in our components below
 const slideUp = {
   hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.6 
+    } 
+  }
 };
 
 const staggerContainer = {
@@ -308,7 +328,7 @@ const staggerContainer = {
       delayChildren: 0.3
     }
   }
-};
+};;
 
 // Full screen PDF viewer component
 const FullScreenPdfViewer = ({ url, isOpen, onClose }: { url: string, isOpen: boolean, onClose: () => void }) => {
@@ -438,6 +458,104 @@ export default function DecypherItPage() {
     setFilteredPlatforms(platforms);
   };
 
+  // Function to download PDF
+  const handleDownloadPdf = () => {
+    if (selectedPlatformData?.pdfPath) {
+      // Create an anchor element and trigger download
+      const link = document.createElement('a');
+      link.href = selectedPlatformData.pdfPath;
+      link.download = `${selectedPlatformData.name}_TnC.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  // Function to export results as PDF
+  const handleExportResults = () => {
+    // Create a printable version of the results
+    const printWindow = window.open('', '_blank');
+    if (printWindow && analysisResults) {
+      const platformName = selectedPlatformData?.name || 'Platform';
+      
+      // Map existing data to the keyPoints and privacyConcerns properties
+      const keyPoints = analysisResults.flowchart || [];
+      const privacyConcerns = analysisResults.risks || [];
+      
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${platformName} Terms Analysis</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; color: #333; }
+              h1 { color: #6B57E6; margin-bottom: 30px; }
+              h2 { color: #8C7FF8; margin-top: 30px; }
+              .summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+              .key-point { margin: 15px 0; padding-left: 20px; border-left: 3px solid #6B57E6; }
+              .concern { color: #e74c3c; }
+              .footer { margin-top: 50px; font-size: 12px; color: #666; text-align: center; }
+              .dos-donts { display: flex; gap: 20px; margin: 20px 0; }
+              .dos, .donts { flex: 1; padding: 20px; border-radius: 8px; }
+              .dos { background: #e7f6f2; }
+              .donts { background: #fee6e6; }
+              .dos h3 { color: #10A37F; }
+              .donts h3 { color: #FF0000; }
+              li { margin-bottom: 10px; }
+            </style>
+          </head>
+          <body>
+            <h1>${platformName} Terms & Conditions Analysis</h1>
+            <div class="summary">
+              <h2>Summary</h2>
+              <p>${analysisResults.summary || 'No summary available'}</p>
+            </div>
+            
+            <h2>Key Points</h2>
+            ${keyPoints.map((point) => 
+              `<div class="key-point">
+                <h3>${point.title}</h3>
+                <p>${point.description}</p>
+                ${point.type ? `<p><small>Type: ${point.type}</small></p>` : ''}
+              </div>`
+            ).join('') || '<p>No key points available</p>'}
+            
+            <h2>Privacy Concerns</h2>
+            ${privacyConcerns.map((concern) => 
+              `<div class="key-point concern">
+                <h3>${concern.title} (${concern.level} Risk)</h3>
+                <p>${concern.description}</p>
+              </div>`
+            ).join('') || '<p>No privacy concerns identified</p>'}
+            
+            <div class="dos-donts">
+              <div class="dos">
+                <h3>Do's</h3>
+                <ul>
+                  ${analysisResults.dos?.map(item => `<li>${item}</li>`).join('') || '<li>No specific recommendations available</li>'}
+                </ul>
+              </div>
+              <div class="donts">
+                <h3>Don'ts</h3>
+                <ul>
+                  ${analysisResults.donts?.map(item => `<li>${item}</li>`).join('') || '<li>No specific warnings available</li>'}
+                </ul>
+              </div>
+            </div>
+            
+            <div class="footer">
+              <p>Generated by Decypher It - ${new Date().toLocaleDateString()}</p>
+              <p>© ${new Date().getFullYear()} Decypher - AI-Powered Terms & Conditions Analysis</p>
+            </div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    }
+  };
+
   // Handle completed platforms - move to top of the list
   const markPlatformAsCompleted = (platformId: string) => {
     // Only add if not already completed
@@ -474,79 +592,287 @@ export default function DecypherItPage() {
                 type: "spring",
                 stiffness: 100
               }}
-              className="text-center mb-12 pt-12"
+              className="text-center pt-8 pb-10 relative overflow-hidden"
             >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-              >
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mb-4">
-                  <Sparkles className="w-4 h-4 mr-1" /> AI-Powered Analysis
-                </span>
-              </motion.div>
+              {/* Static colorful background */}
+              <div className="absolute inset-0 overflow-hidden -z-10">
+                {/* Main background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50"></div>
+                
+                {/* Static color orbs */}
+                <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 mix-blend-multiply filter blur-3xl"></div>
+                <div className="absolute -top-10 right-20 w-72 h-72 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 mix-blend-multiply filter blur-3xl"></div>
+                <div className="absolute bottom-10 left-40 w-80 h-80 rounded-full bg-gradient-to-r from-indigo-500/15 to-violet-500/15 mix-blend-multiply filter blur-3xl"></div>
+                
+                {/* Subtle dot grid pattern */}
+                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(107, 87, 230, 0.1) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+              </div>
               
-              <motion.h1 
-                className="text-5xl md:text-6xl font-bold font-poppins mb-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.7 }}
+              {/* AI Badge - no animation */}
+              <div
+                className="relative z-10 mb-6"
               >
-                <span className="text-[#6B57E6]">Decypher</span>{" "}
-                <span className="relative">
-                  <span className="text-[#8C7FF8]">It</span>
-                  <motion.span 
-                    className="absolute -bottom-2 left-0 w-full h-3 bg-gradient-to-r from-indigo-300/30 to-purple-300/30 rounded-full" 
-                    initial={{ width: 0 }}
-                    animate={{ width: "100%" }}
-                    transition={{ delay: 0.6, duration: 0.7 }}
-                  />
-                </span>
-              </motion.h1>
+                <div
+                  className="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white font-medium border border-indigo-400/30 shadow-lg shadow-indigo-500/20"
+                >
+                  <Sparkles className="w-5 h-5 text-yellow-200 mr-2" />
+                  <span className="text-base">AI-Powered Legal Analysis</span>
+                </div>
+              </div>
               
-              <motion.p 
-                className="text-xl text-gray-700 max-w-3xl mx-auto mb-8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.7 }}
+              {/* Main title - no animation */}
+              <div 
+                className="relative z-10 mb-8"
               >
-                Select from our collection of Terms & Conditions to see Decypher in action. 
-                Get instant flowcharts, summaries, and actionable insights.
-              </motion.p>
+                <h1 
+                  className="text-6xl md:text-8xl font-bold font-poppins tracking-tight leading-tight"
+                  style={{ 
+                    textShadow: "0px 10px 30px rgba(107, 87, 230, 0.2)"
+                  }}
+                >
+                  <span 
+                    className="inline-block bg-clip-text text-transparent bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700"
+                  >
+                    Decypher
+                  </span>
+                  {" "}
+                  <span className="relative inline-block">
+                    <span 
+                      className="inline-block bg-clip-text text-transparent bg-gradient-to-br from-fuchsia-500 via-pink-600 to-purple-700"
+                    >
+                      It
+                    </span>
+                    
+                    {/* Static underline */}
+                    <div 
+                      className="absolute -bottom-4 left-0 w-full h-3 rounded-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+                      style={{ filter: "blur(1px)" }}
+                    />
+                  </span>
+                </h1>
+              </div>
+              
+              {/* Main description card - styled like your screenshot */}
+              <div
+                className="relative z-10 flex justify-center mb-12"
+              >
+                {/* Subtle glow behind card */}
+                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-20 blur-lg"></div>
+                
+                <div 
+                  className="relative w-full max-w-4xl mx-auto px-8 py-10 rounded-3xl bg-white/90 backdrop-blur-sm shadow-xl border border-white/50"
+                >
+                  <div className="flex flex-col md:flex-row items-center gap-8">
+                    {/* Left text content */}
+                    <div className="flex-1 text-left">
+                      <h3
+                        className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-purple-700"
+                      >
+                        Our powerful AI transforms legal jargon into clarity
+                      </h3>
+                      
+                      <p
+                        className="text-gray-700 leading-relaxed mb-6"
+                      >
+                        <span className="font-medium">Select any platform</span> below and watch as we transform dense Terms & Conditions into insights you can actually understand and use.
+                      </p>
+                      
+                      <div
+                        className="flex flex-wrap gap-3"
+                      >
+                        <span 
+                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-md shadow-indigo-500/20"
+                        >
+                          <BarChart3 className="h-4 w-4" />
+                          Visual Flowcharts
+                        </span>
+                        
+                        <span 
+                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-md shadow-purple-500/20"
+                        >
+                          <FileText className="h-4 w-4" />
+                          Clear Summaries
+                        </span>
+                        
+                        <span 
+                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-600 to-pink-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-md shadow-pink-500/20"
+                        >
+                          <AlertTriangle className="h-4 w-4" />
+                          Risk Detection
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Right static illustration */}
+                    <div 
+                      className="relative w-64 h-64 flex-shrink-0 hidden md:block"
+                    >
+                      {/* Document illustration - no animation */}
+                      <div 
+                        className="absolute inset-0 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl shadow-lg transform rotate-3"
+                      >
+                        <div className="absolute inset-2 bg-white rounded-lg p-4 flex flex-col">
+                          <div className="flex items-center mb-4">
+                            <div className="w-8 h-8 rounded-full bg-indigo-100 mr-2"></div>
+                            <div>
+                              <div className="h-2 w-20 bg-gray-100 rounded mb-1"></div>
+                              <div className="h-2 w-12 bg-gray-100 rounded"></div>
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="h-2 w-full bg-gray-100 rounded mb-2"></div>
+                            <div className="h-2 w-5/6 bg-gray-100 rounded mb-2"></div>
+                            <div className="h-2 w-4/6 bg-gray-100 rounded mb-4"></div>
+                            <div className="h-8 w-full bg-indigo-50 rounded mb-2 flex items-center p-1">
+                              <div className="h-6 w-6 rounded bg-indigo-200 mr-1"></div>
+                              <div className="h-2 w-16 bg-gray-100 rounded"></div>
+                            </div>
+                            <div className="h-8 w-full bg-purple-50 rounded mb-2 flex items-center p-1">
+                              <div className="h-6 w-6 rounded bg-purple-200 mr-1"></div>
+                              <div className="h-2 w-16 bg-gray-100 rounded"></div>
+                            </div>
+                            <div className="h-8 w-full bg-pink-50 rounded flex items-center p-1">
+                              <div className="h-6 w-6 rounded bg-pink-200 mr-1"></div>
+                              <div className="h-2 w-16 bg-gray-100 rounded"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Static decorative elements */}
+                      <div 
+                        className="absolute -right-4 -top-4 w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 shadow-lg"
+                      />
+                      
+                      <div 
+                        className="absolute -left-3 bottom-10 w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 shadow-lg transform rotate-12"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Static feature icons row */}
+              <div
+                className="grid grid-cols-3 md:flex md:justify-center gap-4 md:gap-12 max-w-5xl mx-auto mb-12"
+              >
+                <div 
+                  className="flex flex-col items-center"
+                >
+                  <div className="mb-3">
+                    <div className="relative bg-gradient-to-br from-indigo-500 to-indigo-700 p-4 rounded-full shadow-lg shadow-indigo-500/30">
+                      <FileBadge className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <span className="font-medium text-gray-800">Easy Analysis</span>
+                  <span className="text-xs text-gray-500">AI-powered insights</span>
+                </div>
+                
+                <div 
+                  className="flex flex-col items-center"
+                >
+                  <div className="mb-3">
+                    <div className="relative bg-gradient-to-br from-purple-500 to-purple-700 p-4 rounded-full shadow-lg shadow-purple-500/30">
+                      <Zap className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <span className="font-medium text-gray-800">Instant Results</span>
+                  <span className="text-xs text-gray-500">In seconds</span>
+                </div>
+                
+                <div 
+                  className="flex flex-col items-center"
+                >
+                  <div className="mb-3">
+                    <div className="relative bg-gradient-to-br from-pink-500 to-pink-700 p-4 rounded-full shadow-lg shadow-pink-500/30">
+                      <Shield className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <span className="font-medium text-gray-800">Stay Protected</span>
+                  <span className="text-xs text-gray-500">Know your rights</span>
+                </div>
+              </div>
 
               {/* Enhanced Search Bar with Animation */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="max-w-2xl mx-auto mt-8 relative"
+                className="max-w-2xl mx-auto mt-8 mb-6 relative z-10"
               >
-                <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
-                  <div className="relative bg-white rounded-xl">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-500 h-5 w-5" />
+                {/* Decorative elements */}
+                <motion.div 
+                  className="absolute -left-12 -top-8 w-16 h-16 bg-gradient-to-r from-indigo-300/30 to-transparent rounded-full blur-xl"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                />
+                
+                <motion.div 
+                  className="absolute -right-10 -bottom-8 w-20 h-20 bg-gradient-to-r from-purple-300/30 to-transparent rounded-full blur-xl"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    opacity: [0.2, 0.5, 0.2],
+                  }}
+                  transition={{ duration: 5, repeat: Infinity }}
+                />
+                
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  {/* Gradient border effect */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-30 group-hover:opacity-70 transition duration-300"></div>
+                  
+                  <div className="relative bg-white rounded-xl shadow-lg">
+                    {/* Animated search icon */}
+                    <motion.div
+                      animate={{ 
+                        rotate: [0, 0, 10, -10, 0],
+                        scale: [1, 1, 1.1, 1.1, 1]
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        times: [0, 0.7, 0.8, 0.9, 1],
+                        repeat: Infinity,
+                        repeatDelay: 3
+                      }}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-500"
+                    >
+                      <Search className="h-5 w-5" />
+                    </motion.div>
+                    
                     <motion.input
-                      whileFocus={{ scale: 1.02, boxShadow: '0 8px 25px rgba(140, 127, 248, 0.2)' }}
+                      whileFocus={{ 
+                        boxShadow: '0 8px 25px rgba(140, 127, 248, 0.2)',
+                        backgroundColor: "#fefeff"
+                      }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                       type="text"
                       placeholder="Search platforms..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-12 pr-14 py-4 rounded-xl border border-gray-200 bg-white/90 backdrop-blur-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 transition-all duration-300 text-lg"
+                      className="w-full pl-12 pr-14 py-4 rounded-xl border border-gray-200 bg-white/95 backdrop-blur-md focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 transition-all duration-300 text-lg shadow-inner"
                     />
+                    
+                    {/* Clear button with improved animation */}
                     {searchQuery && (
                       <motion.button
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-gray-100"
+                        initial={{ opacity: 0, scale: 0.8, rotate: -90 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, rotate: 90 }}
+                        whileHover={{ scale: 1.2, backgroundColor: "#f1f5f9" }}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-100 bg-gray-50/80"
                         onClick={() => setSearchQuery('')}
                       >
-                        <X className="h-4 w-4 text-gray-400" />
+                        <X className="h-4 w-4 text-gray-500" />
                       </motion.button>
                     )}
                   </div>
-                </div>
+                </motion.div>
                 
                 {filteredPlatforms.length === 0 && (
                   <motion.div
@@ -671,7 +997,8 @@ export default function DecypherItPage() {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-700 bg-white shadow-sm border border-gray-100 transition-all"
+                        onClick={handleDownloadPdf}
+                        className="flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-700 bg-white shadow-sm border border-gray-100 transition-all hover:bg-gray-50"
                       >
                         <Download className="h-5 w-5" />
                         <span className="hidden sm:inline">Download</span>
@@ -777,7 +1104,12 @@ export default function DecypherItPage() {
                     </button>
                   </motion.div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={staggerContainer}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
+                  >
                     {filteredPlatforms.map((platform, index) => {
                       const isCompleted = completedPlatforms.includes(platform.id);
                       return (
@@ -797,16 +1129,43 @@ export default function DecypherItPage() {
                           {/* Completion badge */}
                           {isCompleted && (
                             <motion.div
-                              initial={{ opacity: 0, scale: 0.5 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              className="absolute -top-3 -right-3 z-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full p-1.5 shadow-lg"
+                              initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
+                              animate={{ 
+                                opacity: 1, 
+                                scale: 1, 
+                                rotate: 0,
+                                boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.2)'
+                              }}
+                              whileHover={{ 
+                                scale: 1.2, 
+                                rotate: [0, -10, 10, -10, 0],
+                                transition: { duration: 0.5 }
+                              }}
+                              transition={{
+                                duration: 0.6,
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20
+                              }}
+                              className="absolute -top-3 -right-3 z-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full p-2 shadow-lg"
                             >
-                              <CheckCircle className="h-5 w-5 text-white" />
+                              <motion.div
+                                animate={{
+                                  scale: [1, 1.2, 1],
+                                }}
+                                transition={{
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  repeatType: "reverse"
+                                }}
+                              >
+                                <CheckCircle className="h-5 w-5 text-white" />
+                              </motion.div>
                             </motion.div>
                           )}
                           
                           <motion.button
-                            whileHover={{ y: -8, scale: 1.02 }}
+                            whileHover={{ y: -8, scale: 1.05, boxShadow: "0 20px 30px rgba(0, 0, 0, 0.1)" }}
                             whileTap={{ scale: 0.98 }}
                             transition={{ 
                               type: "spring", 
@@ -822,24 +1181,40 @@ export default function DecypherItPage() {
                           >
                             <div className="absolute inset-0 bg-gradient-to-br from-white to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             
+                            {/* Animated highlight effect on hover */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300 -translate-x-full group-hover:translate-x-full ease-in-out" style={{ transitionDuration: '1.5s' }}></div>
+                            
                             <div className="relative">
                               {/* Platform Card Header */}
                               <div className="flex items-start mb-4">
                                 <motion.div 
-                                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                                  transition={{ duration: 0.5 }}
-                                  className={`h-14 w-14 rounded-xl flex items-center justify-center mr-4 shadow-md`}
+                                  whileHover={{ 
+                                    rotate: [0, -10, 10, -10, 0],
+                                    scale: 1.1,
+                                    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)"
+                                  }}
+                                  animate={{ 
+                                    y: [0, -5, 0], 
+                                    scale: [1, 1.05, 1],
+                                  }}
+                                  transition={{ 
+                                    duration: 2, 
+                                    repeat: Infinity,
+                                    repeatType: "reverse",
+                                    ease: "easeInOut"
+                                  }}
+                                  className={`h-16 w-16 rounded-xl flex items-center justify-center mr-4 shadow-md transform-gpu`}
                                   style={{ 
                                     backgroundColor: platform.bgColor || '#F2F0FF',
-                                    boxShadow: `0 4px 12px ${platform.bgColor}80 || rgba(242, 240, 255, 0.5)`
+                                    boxShadow: `0 6px 16px ${platform.bgColor}90 || rgba(242, 240, 255, 0.6)`
                                   }}
                                 >
                                   <Image
                                     src={platform.icon || `/images/platforms/${platform.id}.svg`}
                                     alt={platform.name}
-                                    width={28}
-                                    height={28}
-                                    className="h-7 w-7 object-contain"
+                                    width={32}
+                                    height={32}
+                                    className="h-8 w-8 object-contain"
                                   />
                                 </motion.div>
                                 
@@ -858,35 +1233,41 @@ export default function DecypherItPage() {
                               
                               {/* Bottom action button */}
                               <div className="mt-auto pt-4 flex justify-between items-center">
-                                <span className={`text-xs px-2 py-1 rounded-full ${
-                                  isCompleted ? 'bg-green-50 text-green-600' : 'bg-indigo-50 text-indigo-600'
-                                }`}>
+                                <motion.span 
+                                  whileHover={{ scale: 1.05 }}
+                                  className={`text-xs px-3 py-1.5 rounded-full shadow-sm ${
+                                    isCompleted ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'
+                                  }`}
+                                >
                                   {isCompleted ? 'Results Available' : 'PDF Document'}
-                                </span>
+                                </motion.span>
                                 
-                                <div className={`flex items-center font-medium text-sm ${
-                                  isCompleted ? 'text-green-600' : 'text-indigo-600'
-                                }`}>
+                                <motion.div 
+                                  whileHover={{ scale: 1.05, x: 3 }}
+                                  className={`flex items-center font-medium text-sm ${
+                                    isCompleted ? 'text-green-600' : 'text-indigo-600'
+                                  }`}
+                                >
                                   <span>{isCompleted ? 'View Results' : 'Analyze Document'}</span>
                                   <motion.div
                                     animate={{ x: [0, 5, 0] }}
                                     transition={{ 
                                       repeat: Infinity, 
                                       repeatType: "reverse",
-                                      duration: 1.5,
-                                      repeatDelay: 1
+                                      duration: 1.2,
+                                      repeatDelay: 0.5
                                     }}
                                   >
                                     <ChevronRight className="h-4 w-4 ml-1" />
                                   </motion.div>
-                                </div>
+                                </motion.div>
                               </div>
                             </div>
                           </motion.button>
                         </motion.div>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 )}
               </motion.div>
             )}
@@ -1111,9 +1492,14 @@ export default function DecypherItPage() {
                       />
                       <motion.div
                         animate={{ 
-                          boxShadow: ['0px 0px 0px 0px rgba(140, 127, 248, 0)', '0px 0px 20px 10px rgba(140, 127, 248, 0.3)', '0px 0px 0px 0px rgba(140, 127, 248, 0)'] 
+                          boxShadow: ['0px 0px 0px 0px rgba(140, 127, 248, 0)', '0px 0px 20px 10px rgba(140, 127, 248, 0.3)']
                         }}
-                        transition={{ duration: 3, repeat: Infinity }}
+                        transition={{ 
+                          duration: 1.5, 
+                          repeat: Infinity, 
+                          repeatType: "reverse", 
+                          ease: "easeInOut" 
+                        }}
                         className="absolute inset-0 rounded-2xl"
                       />
                     </motion.div>
@@ -1165,6 +1551,7 @@ export default function DecypherItPage() {
                       <motion.button 
                         whileHover={{ scale: 1.05, boxShadow: '0 8px 25px rgba(140, 127, 248, 0.3)' }}
                         whileTap={{ scale: 0.95 }}
+                        onClick={handleExportResults}
                         className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg"
                       >
                         <Download className="h-4 w-4" />
@@ -1285,7 +1672,8 @@ export default function DecypherItPage() {
                             }}
                             className={`
                               p-5 rounded-xl border-l-4 flex flex-col relative
-                              ${item.type === 'requirement' ? 'border-blue-400 bg-blue-50/50' :
+                              ${!item.type ? 'border-purple-400 bg-purple-50/50' :
+                                item.type === 'requirement' ? 'border-blue-400 bg-blue-50/50' :
                                 item.type === 'right' ? 'border-green-400 bg-green-50/50' :
                                 item.type === 'warning' ? 'border-amber-400 bg-amber-50/50' :
                                 item.type === 'info' ? 'border-purple-400 bg-purple-50/50' :
@@ -1297,7 +1685,8 @@ export default function DecypherItPage() {
                             <motion.div 
                               className={`
                                 absolute -top-3 left-4 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white
-                                ${item.type === 'requirement' ? 'bg-blue-500' :
+                                ${!item.type ? 'bg-purple-500' :
+                                  item.type === 'requirement' ? 'bg-blue-500' :
                                   item.type === 'right' ? 'bg-green-500' :
                                   item.type === 'warning' ? 'bg-amber-500' :
                                   item.type === 'info' ? 'bg-purple-500' :
@@ -1327,7 +1716,7 @@ export default function DecypherItPage() {
                                   'text-red-600'
                                 }
                               `}>
-                                {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                                {item.type ? (item.type.charAt(0).toUpperCase() + item.type.slice(1)) : 'Info'}
                               </div>
                             </div>
                           </motion.div>

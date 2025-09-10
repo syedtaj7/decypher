@@ -16,7 +16,8 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 # Optional: Google Analytics
 NEXT_PUBLIC_GA_ID=your_ga_id
 
-# Optional: API Keys for AI services
+# API Keys for AI services
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
 OPENAI_API_KEY=your_openai_key
 ANTHROPIC_API_KEY=your_anthropic_key
 ```
