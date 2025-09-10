@@ -12,7 +12,9 @@ interface Message {
   timestamp: Date;
 }
 
-export default function AiAssistPage() {
+import ProtectedRoute from '@/components/ProtectedRoute';
+
+function AiAssistContent() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -339,3 +341,11 @@ export default function AiAssistPage() {
   );
 }
 
+// Export a wrapped version with authentication protection
+export default function AiAssistPage() {
+  return (
+    <ProtectedRoute>
+      <AiAssistContent />
+    </ProtectedRoute>
+  );
+}

@@ -371,7 +371,9 @@ const FullScreenPdfViewer = ({ url, isOpen, onClose }: { url: string, isOpen: bo
   );
 };
 
-export default function DecypherItPage() {
+import ProtectedRoute from '@/components/ProtectedRoute';
+
+function DecypherItContent() {
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -1809,5 +1811,14 @@ export default function DecypherItPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+// Export a wrapped version with authentication protection
+export default function DecypherItPage() {
+  return (
+    <ProtectedRoute>
+      <DecypherItContent />
+    </ProtectedRoute>
   );
 }
