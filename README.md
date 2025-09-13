@@ -1,36 +1,268 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🤖 Decypher
+### *Transform Complex Documents into Crystal Clear Insights*
 
-First, run the development server:
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&duration=3000&pause=1000&color=6B57E6&center=true&vCenter=true&width=600&lines=AI-Powered+Document+Analysis;Legal+Documents+Made+Simple;Instant+Insights+%26+Risk+Analysis;Built+with+Next.js+%26+AI" alt="Typing SVG" />
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Firebase](https://img.shields.io/badge/Firebase-12.2.1-FFCA28?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+
+<img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="700">
+
+</div>
+
+## ✨ What is Decypher?
+
+<img align="right" src="https://user-images.githubusercontent.com/74038190/229223263-cf2e4b07-2615-4f87-9c38-e37600f8381a.gif" width="300">
+
+Decypher is an **AI-powered platform** that transforms complex legal, business, and technical documents into easy-to-understand insights. Say goodbye to confusing Terms & Conditions and hello to clear, actionable information!
+
+### 🎯 Key Features
+
+- 🔍 **Smart Document Analysis** - Upload any PDF and get instant insights
+- 💬 **AI Chat Interface** - Ask questions about your documents in natural language  
+- 📊 **Risk Assessment** - Identify potential risks and important clauses
+- ✅ **Actionable Insights** - Get clear dos and don'ts for any document
+- 🎨 **Beautiful UI** - Modern, responsive design with smooth animations
+
+<br clear="right"/>
+
+## 🚀 Live Demo
+
+<div align="center">
+
+### 📱 Try it yourself!
+
+<img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="500">
+
+**[🌐 Visit Decypher](https://your-demo-link.com)** | **[📖 Documentation](https://github.com/syedtaj7/decypher/wiki)**
+
+</div>
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Frontend | Backend | AI/ML | Database | Styling |
+|----------|---------|-------|----------|---------|
+| ![Next.js](https://img.shields.io/badge/-Next.js-000000?style=flat-square&logo=next.js) | ![Firebase](https://img.shields.io/badge/-Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black) | ![Google AI](https://img.shields.io/badge/-Google_AI-4285F4?style=flat-square&logo=google&logoColor=white) | ![Firestore](https://img.shields.io/badge/-Firestore-FFCA28?style=flat-square&logo=firebase&logoColor=black) | ![Tailwind](https://img.shields.io/badge/-Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white) |
+| ![React](https://img.shields.io/badge/-React-61DAFB?style=flat-square&logo=react&logoColor=black) | ![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat-square&logo=node.js&logoColor=white) | ![OpenAI](https://img.shields.io/badge/-OpenAI-412991?style=flat-square&logo=openai&logoColor=white) | ![Firebase Auth](https://img.shields.io/badge/-Auth-FFCA28?style=flat-square&logo=firebase&logoColor=black) | ![Framer Motion](https://img.shields.io/badge/-Framer_Motion-0055FF?style=flat-square&logo=framer&logoColor=white) |
+| ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white) | | ![Anthropic](https://img.shields.io/badge/-Anthropic-191919?style=flat-square&logo=anthropic&logoColor=white) | ![Firebase Storage](https://img.shields.io/badge/-Storage-FFCA28?style=flat-square&logo=firebase&logoColor=black) | ![Lucide Icons](https://img.shields.io/badge/-Lucide-000000?style=flat-square&logo=lucide&logoColor=white) |
+
+</div>
+
+## 🎬 Features Showcase
+
+<details>
+<summary>🔍 <b>Document Analysis</b></summary>
+
+<br>
+
+- **Smart PDF Processing**: Upload any legal document and get instant analysis
+- **Risk Identification**: Automatically detect potential risks and important clauses  
+- **Flowchart Generation**: Visual representation of document structure
+- **Summary Generation**: Key points extracted and simplified
+
+<img src="https://user-images.githubusercontent.com/74038190/212284158-e840e285-664b-44d7-b79b-e264b5e54825.gif" width="400">
+
+</details>
+
+<details>
+<summary>💬 <b>AI Chat Interface</b></summary>
+
+<br>
+
+- **Natural Language Queries**: Ask questions in plain English
+- **Context-Aware Responses**: AI understands your document context
+- **Real-time Processing**: Instant responses with typing indicators
+- **Smart Suggestions**: Helpful prompt suggestions to get started
+
+<img src="https://user-images.githubusercontent.com/74038190/212284136-03988914-d42b-45cb-b001-c9c1c5658845.gif" width="400">
+
+</details>
+
+<details>
+<summary>🎨 <b>Beautiful UI/UX</b></summary>
+
+<br>
+
+- **Smooth Animations**: Powered by Framer Motion
+- **Responsive Design**: Works perfectly on all devices
+- **Dark/Light Themes**: Customizable appearance
+- **Modern Components**: Clean, professional interface
+
+<img src="https://user-images.githubusercontent.com/74038190/212284115-f47cd8ff-2ffb-4b04-b5bf-4d1c14c0247f.gif" width="400">
+
+</details>
+
+## 🚀 Quick Start
+
+<img align="right" src="https://user-images.githubusercontent.com/74038190/212284094-e50ceae2-de86-4dd6-9a1c-4eb1b2c6e1e6.gif" width="200">
+
+### Prerequisites
+- Node.js 18+ 
+- Firebase account
+- AI API keys (Google Gemini, OpenAI, or Anthropic)
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/syedtaj7/decypher.git
+cd decypher
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Add your API keys to .env.local
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<br clear="right"/>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🔧 Environment Setup [2](#0-1)  The application requires several environment variables for Firebase and AI services integration.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+<details>
+<summary>📋 <b>Required Environment Variables</b></summary>
 
-## Learn More
+```env
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-To learn more about Next.js, take a look at the following resources:
+# AI Services
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Optional
+NEXT_PUBLIC_GA_ID=your_ga_id
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+</details>
 
-## Deploy on Vercel
+## 📊 Project Stats
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<div align="center">
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<img src="https://github-readme-stats.vercel.app/api?username=syedtaj7&repo=decypher&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117&title_color=6B57E6&icon_color=6B57E6&text_color=c9d1d9" alt="GitHub Stats">
+
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=syedtaj7&layout=compact&theme=radical&hide_border=true&bg_color=0D1117&title_color=6B57E6&text_color=c9d1d9" alt="Top Languages">
+
+</div>
+
+## 🤝 Contributing
+
+<img align="right" src="https://user-images.githubusercontent.com/74038190/212284145-bf2c01a8-c448-4f1a-b911-99cc33e58d35.gif" width="200">
+
+We welcome contributions! Here's how you can help:
+
+1. 🍴 Fork the repository
+2. 🌟 Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. 💻 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
+5. 🔄 Open a Pull Request
+
+<br clear="right"/>
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+<div align="center">
+
+<img src="https://user-images.githubusercontent.com/74038190/212284175-acc7d32c-9d32-462f-a12a-ccb1f4daa4c0.gif" width="500">
+
+**Built with ❤️ by [Syed Taj](https://github.com/syedtaj7)**
+
+### Special Thanks To:
+- 🤖 **Google Gemini AI** for powerful document analysis
+- 🔥 **Firebase** for seamless backend services  
+- ⚡ **Next.js** for the amazing framework
+- 🎨 **Tailwind CSS** for beautiful styling
+- ✨ **Framer Motion** for smooth animations
+
+---
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=18&duration=2000&pause=1000&color=6B57E6&center=true&vCenter=true&width=600&lines=⭐+Star+this+repo+if+you+found+it+helpful!;🚀+Let's+simplify+documents+together!" alt="Typing SVG" />
+
+</div>
+```
+
+## Notes
+
+This README incorporates the key features and tech stack from your codebase, including the Next.js 15.5.2 framework [3](#0-2) , Firebase integration [4](#0-3) , AI services integration [5](#0-4) , and the modern UI components with Framer Motion animations [6](#0-5) . The animated elements and GIFs will make the README visually appealing and engaging for visitors to your repository.
+
+Wiki pages you might want to explore:
+- [Overview (syedtaj7/decypher)](/wiki/syedtaj7/decypher#1)
+- [User Interface & Experience (syedtaj7/decypher)](/wiki/syedtaj7/decypher#3)
+- [Development & Configuration (syedtaj7/decypher)](/wiki/syedtaj7/decypher#5)
+
+### Citations
+
+**File:** SETUP.md (L1-2)
+```markdown
+# Decypher Website Setup Guide
+
+```
+
+**File:** SETUP.md (L3-23)
+```markdown
+## Environment Variables
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+# Optional: Google Analytics
+NEXT_PUBLIC_GA_ID=your_ga_id
+
+# API Keys for AI services
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
+```
+```
+
+**File:** SETUP.md (L25-32)
+```markdown
+## Firebase Setup
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project or use an existing one
+3. Enable Authentication with Email/Password and Google providers
+4. Enable Firestore Database
+5. Enable Storage
+6. Copy the configuration values to your `.env.local` file
+```
+
+**File:** SETUP.md (L53-53)
+```markdown
+- ✅ Framer Motion animations throughout
+```
+
+**File:** SETUP.md (L67-67)
+```markdown
+- **Framework**: Next.js 14 with App Router
+```
