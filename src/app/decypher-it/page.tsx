@@ -517,163 +517,163 @@ function DecypherItContent() {
               }}
               className="text-center pt-8 pb-10 relative overflow-hidden"
             >
-              {/* Static colorful background */}
+              {/* Animated background elements with legal theme */}
               <div className="absolute inset-0 overflow-hidden -z-10">
-                {/* Main background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50"></div>
-                
-                {/* Static color orbs */}
-                <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 mix-blend-multiply filter blur-3xl"></div>
-                <div className="absolute -top-10 right-20 w-72 h-72 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 mix-blend-multiply filter blur-3xl"></div>
-                <div className="absolute bottom-10 left-40 w-80 h-80 rounded-full bg-gradient-to-r from-indigo-500/15 to-violet-500/15 mix-blend-multiply filter blur-3xl"></div>
-                
-                {/* Subtle dot grid pattern */}
-                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(107, 87, 230, 0.1) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+                <motion.div 
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 90, 180, 270, 360]
+                  }}
+                  transition={{ 
+                    duration: 30,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                  className="absolute top-20 left-16 w-80 h-80 rounded-full bg-gradient-to-r from-amber-300/15 to-orange-300/15 mix-blend-multiply filter blur-3xl"
+                />
+                <motion.div 
+                  animate={{ 
+                    scale: [1.1, 1, 1.1],
+                    rotate: [360, 270, 180, 90, 0]
+                  }}
+                  transition={{ 
+                    duration: 25,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                  className="absolute bottom-16 right-16 w-96 h-96 rounded-full bg-gradient-to-r from-emerald-300/15 to-teal-300/15 mix-blend-multiply filter blur-3xl"
+                />
+                <motion.div 
+                  animate={{ 
+                    y: [0, -40, 0],
+                    scale: [1, 1.15, 1]
+                  }}
+                  transition={{ 
+                    duration: 18,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute top-40 right-1/4 w-72 h-72 rounded-full bg-gradient-to-r from-violet-300/20 to-purple-300/20 mix-blend-multiply filter blur-3xl"
+                />
               </div>
               
-              {/* AI Badge - no animation */}
-              <div
-                className="relative z-10 mb-6"
-              >
-                <div
-                  className="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white font-medium border border-indigo-400/30 shadow-lg shadow-indigo-500/20"
+              {/* Floating legal elements */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <motion.div
+                  animate={{ 
+                    y: [0, -25, 0],
+                    rotate: [0, 8, -8, 0]
+                  }}
+                  transition={{ 
+                    duration: 10,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute top-28 left-24 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-amber-100"
                 >
-                  <Sparkles className="w-5 h-5 text-yellow-200 mr-2" />
-                  <span className="text-base">AI-Powered Legal Analysis</span>
-                </div>
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-amber-600" />
+                    <div className="text-sm text-gray-700">Terms & Conditions</div>
+                  </div>
+                </motion.div>
+                
+                <motion.div
+                  animate={{ 
+                    y: [0, 20, 0],
+                    x: [0, 15, 0]
+                  }}
+                  transition={{ 
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 3
+                  }}
+                  className="absolute top-44 right-20 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-emerald-100"
+                >
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-600" />
+                    <div className="text-sm text-gray-700">Simplified!</div>
+                  </div>
+                </motion.div>
+                
+                <motion.div
+                  animate={{ 
+                    y: [0, -15, 0],
+                    rotate: [0, -5, 5, 0]
+                  }}
+                  transition={{ 
+                    duration: 12,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.5
+                  }}
+                  className="absolute bottom-32 left-32 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-violet-100"
+                >
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-violet-600" />
+                    <div className="text-sm text-gray-700">Risk Analysis</div>
+                  </div>
+                </motion.div>
               </div>
               
-              {/* Main title - no animation */}
-              <div 
+              {/* Legal analysis badge */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, type: "spring" }}
                 className="relative z-10 mb-8"
               >
-                <h1 
-                  className="text-6xl md:text-8xl font-bold font-poppins tracking-tight leading-tight"
-                  style={{ 
-                    textShadow: "0px 10px 30px rgba(107, 87, 230, 0.2)"
-                  }}
-                >
-                  <span 
-                    className="inline-block bg-clip-text text-transparent bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700"
+                <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-amber-500/90 to-orange-600/90 text-white font-medium shadow-lg shadow-amber-500/25">
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
                   >
-                    Decypher
+                    <BarChart3 className="w-5 h-5 text-amber-100 mr-2" />
+                  </motion.div>
+                  <span className="text-base">AI Legal Document Analyzer</span>
+                </div>
+              </motion.div>
+              
+              {/* Main title with legal analysis theme */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="relative z-10 mb-6"
+              >
+                <h1 className="text-6xl md:text-8xl font-bold font-poppins tracking-tight leading-tight">
+                  <span className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-amber-600 via-orange-600 to-red-600">
+                    Legal
                   </span>
-                  {" "}
+                  <br />
                   <span className="relative inline-block">
-                    <span 
-                      className="inline-block bg-clip-text text-transparent bg-gradient-to-br from-fuchsia-500 via-pink-600 to-purple-700"
-                    >
-                      It
+                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600">
+                      Made Simple
                     </span>
-                    
-                    {/* Static underline */}
-                    <div 
-                      className="absolute -bottom-4 left-0 w-full h-3 rounded-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
-                      style={{ filter: "blur(1px)" }}
+                    <motion.div 
+                      animate={{ scaleX: [0, 1] }}
+                      transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
+                      className="absolute -bottom-2 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
                     />
                   </span>
                 </h1>
-              </div>
+              </motion.div>
               
-              {/* Main description card - styled like your screenshot */}
-              <div
-                className="relative z-10 flex justify-center mb-12"
+              {/* Interactive subtitle */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="relative z-10 mb-12"
               >
-                {/* Subtle glow behind card */}
-                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-20 blur-lg"></div>
-                
-                <div 
-                  className="relative w-full max-w-4xl mx-auto px-8 py-10 rounded-3xl bg-white/90 backdrop-blur-sm shadow-xl border border-white/50"
-                >
-                  <div className="flex flex-col md:flex-row items-center gap-8">
-                    {/* Left text content */}
-                    <div className="flex-1 text-left">
-                      <h3
-                        className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-purple-700"
-                      >
-                        Our powerful AI transforms legal jargon into clarity
-                      </h3>
-                      
-                      <p
-                        className="text-gray-700 leading-relaxed mb-6"
-                      >
-                        <span className="font-medium">Select any platform</span> below and watch as we transform dense Terms & Conditions into insights you can actually understand and use.
-                      </p>
-                      
-                      <div
-                        className="flex flex-wrap gap-3"
-                      >
-                        <span 
-                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-md shadow-indigo-500/20"
-                        >
-                          <BarChart3 className="h-4 w-4" />
-                          Visual Flowcharts
-                        </span>
-                        
-                        <span 
-                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-md shadow-purple-500/20"
-                        >
-                          <FileText className="h-4 w-4" />
-                          Clear Summaries
-                        </span>
-                        
-                        <span 
-                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-600 to-pink-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-md shadow-pink-500/20"
-                        >
-                          <AlertTriangle className="h-4 w-4" />
-                          Risk Detection
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Right static illustration */}
-                    <div 
-                      className="relative w-64 h-64 flex-shrink-0 hidden md:block"
-                    >
-                      {/* Document illustration - no animation */}
-                      <div 
-                        className="absolute inset-0 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl shadow-lg transform rotate-3"
-                      >
-                        <div className="absolute inset-2 bg-white rounded-lg p-4 flex flex-col">
-                          <div className="flex items-center mb-4">
-                            <div className="w-8 h-8 rounded-full bg-indigo-100 mr-2"></div>
-                            <div>
-                              <div className="h-2 w-20 bg-gray-100 rounded mb-1"></div>
-                              <div className="h-2 w-12 bg-gray-100 rounded"></div>
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <div className="h-2 w-full bg-gray-100 rounded mb-2"></div>
-                            <div className="h-2 w-5/6 bg-gray-100 rounded mb-2"></div>
-                            <div className="h-2 w-4/6 bg-gray-100 rounded mb-4"></div>
-                            <div className="h-8 w-full bg-indigo-50 rounded mb-2 flex items-center p-1">
-                              <div className="h-6 w-6 rounded bg-indigo-200 mr-1"></div>
-                              <div className="h-2 w-16 bg-gray-100 rounded"></div>
-                            </div>
-                            <div className="h-8 w-full bg-purple-50 rounded mb-2 flex items-center p-1">
-                              <div className="h-6 w-6 rounded bg-purple-200 mr-1"></div>
-                              <div className="h-2 w-16 bg-gray-100 rounded"></div>
-                            </div>
-                            <div className="h-8 w-full bg-pink-50 rounded flex items-center p-1">
-                              <div className="h-6 w-6 rounded bg-pink-200 mr-1"></div>
-                              <div className="h-2 w-16 bg-gray-100 rounded"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Static decorative elements */}
-                      <div 
-                        className="absolute -right-4 -top-4 w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 shadow-lg"
-                      />
-                      
-                      <div 
-                        className="absolute -left-3 bottom-10 w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 shadow-lg transform rotate-12"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                  Transform complex <span className="font-semibold text-amber-600">Terms & Conditions</span> into clear,
+                  <br />
+                  actionable insights. Know your rights, risks, and responsibilities.
+                </p>
+              </motion.div>
+              
+
               
               {/* Static feature icons row */}
               <div
