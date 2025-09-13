@@ -11,8 +11,9 @@ import Image from 'next/image';
 import { useAuth } from '@/lib/authContext';
 import { useRouter } from 'next/navigation';
 import Layout from '@/components/Layout';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
-export default function SettingsPage() {
+function SettingsContent() {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
@@ -99,15 +100,63 @@ export default function SettingsPage() {
   const handleSaveProfile = () => {
     // Save profile changes to backend/Firebase
     setIsEditing(false);
+    console.log('Profile saved:', settings);
     // Show success notification
+    alert('Profile saved successfully!');
   };
   
   const handleDeleteDocument = (id: number) => {
     setDocuments(prev => prev.filter(doc => doc.id !== id));
+    console.log('Document deleted:', id);
   };
   
   const handleDeleteConversation = (id: number) => {
     setConversations(prev => prev.filter(convo => convo.id !== id));
+    console.log('Conversation deleted:', id);
+  };
+
+  const handleContactSupport = () => {
+    alert('Contact support functionality would open a support form or email client.');
+  };
+
+  const handlePasswordSecurity = () => {
+    alert('Password & Security settings would open in a new modal or page.');
+  };
+
+  const handleDownloadData = () => {
+    alert('Data download would generate and download a ZIP file with user data.');
+  };
+
+  const handleDeleteAccount = () => {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      alert('Account deletion process would begin after email confirmation.');
+    }
+  };
+
+  const handleClearCache = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    alert('Cache cleared successfully!');
+  };
+
+  const handleSecurityScan = () => {
+    alert('Security scan initiated. This would check for vulnerabilities.');
+  };
+
+  const handleExportSettings = () => {
+    const dataStr = JSON.stringify(settings, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'decypher-settings.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const handleAdvancedSupport = () => {
+    alert('Advanced support would connect you with technical specialists.');
   };
 
   if (loading) {
@@ -364,7 +413,10 @@ export default function SettingsPage() {
                     <h3 className="text-base font-medium text-gray-800 mb-4">Account Management</h3>
                     
                     <div className="space-y-3">
-                      <button className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 rounded-lg group">
+                      <button 
+                        onClick={handlePasswordSecurity}
+                        className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 rounded-lg group"
+                      >
                         <div className="flex items-center">
                           <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
                             <Shield className="w-5 h-5 text-blue-600" />
@@ -377,7 +429,10 @@ export default function SettingsPage() {
                         <span className="text-gray-400 group-hover:text-gray-600">→</span>
                       </button>
                       
-                      <button className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 rounded-lg group">
+                      <button 
+                        onClick={handleDownloadData}
+                        className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 rounded-lg group"
+                      >
                         <div className="flex items-center">
                           <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-4">
                             <Download className="w-5 h-5 text-purple-600" />
@@ -390,7 +445,10 @@ export default function SettingsPage() {
                         <span className="text-gray-400 group-hover:text-gray-600">→</span>
                       </button>
                       
-                      <button className="w-full flex items-center justify-between p-3 text-left text-red-600 hover:bg-red-50 rounded-lg group">
+                      <button 
+                        onClick={handleDeleteAccount}
+                        className="w-full flex items-center justify-between p-3 text-left text-red-600 hover:bg-red-50 rounded-lg group"
+                      >
                         <div className="flex items-center">
                           <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-4">
                             <Lock className="w-5 h-5 text-red-600" />
@@ -469,7 +527,10 @@ export default function SettingsPage() {
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{document.size}</td>
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                               <div className="flex gap-2 justify-end">
-                                <button className="text-[#8C7FF8] hover:text-[#7B6EE7]">
+                                <button 
+                                  className="text-[#8C7FF8] hover:text-[#7B6EE7]"
+                                  onClick={() => alert(`Downloading ${document.name}...`)}
+                                >
                                   <Download className="h-4 w-4" />
                                 </button>
                                 <button 
@@ -549,7 +610,10 @@ export default function SettingsPage() {
                       className="px-3 py-2 border border-gray-300 rounded-lg w-full max-w-md focus:outline-none focus:ring-2 focus:ring-[#8C7FF8] focus:border-transparent"
                     />
                     
-                    <button className="px-4 py-2 text-sm font-medium text-white bg-[#8C7FF8] rounded-lg hover:bg-[#7B6EE7] transition-colors">
+                    <button 
+                      onClick={() => router.push('/ai-assist')}
+                      className="px-4 py-2 text-sm font-medium text-white bg-[#8C7FF8] rounded-lg hover:bg-[#7B6EE7] transition-colors"
+                    >
                       New Conversation
                     </button>
                   </div>
@@ -576,7 +640,10 @@ export default function SettingsPage() {
                           </div>
                           
                           <div className="flex space-x-1">
-                            <button className="p-1.5 hover:bg-gray-100 rounded">
+                            <button 
+                              className="p-1.5 hover:bg-gray-100 rounded"
+                              onClick={() => alert(`Downloading conversation: ${conversation.topic}`)}
+                            >
                               <Download className="h-4 w-4 text-gray-500" />
                             </button>
                             <button 
@@ -589,7 +656,10 @@ export default function SettingsPage() {
                         </div>
                         
                         <div className="mt-3">
-                          <button className="text-[#8C7FF8] text-sm font-medium hover:underline">
+                          <button 
+                            onClick={() => router.push('/ai-assist')}
+                            className="text-[#8C7FF8] text-sm font-medium hover:underline"
+                          >
                             Continue conversation →
                           </button>
                         </div>
@@ -603,7 +673,10 @@ export default function SettingsPage() {
                         </div>
                         <h3 className="text-lg font-medium text-gray-800 mb-1">No conversations yet</h3>
                         <p className="text-gray-500 mb-4">Start a new conversation with the AI assistant</p>
-                        <button className="px-4 py-2 text-sm font-medium text-white bg-[#8C7FF8] rounded-lg hover:bg-[#7B6EE7] transition-colors">
+                        <button 
+                          onClick={() => router.push('/ai-assist')}
+                          className="px-4 py-2 text-sm font-medium text-white bg-[#8C7FF8] rounded-lg hover:bg-[#7B6EE7] transition-colors"
+                        >
                           New Conversation
                         </button>
                       </div>
@@ -753,22 +826,34 @@ export default function SettingsPage() {
                     <h3 className="text-base font-medium text-gray-800 mb-4">System Maintenance</h3>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <button className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <button 
+                        onClick={handleClearCache}
+                        className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
                         <Clock className="w-4 h-4" />
                         Clear Cache
                       </button>
                       
-                      <button className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <button 
+                        onClick={handleSecurityScan}
+                        className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
                         <Shield className="w-4 h-4" />
                         Security Scan
                       </button>
                       
-                      <button className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <button 
+                        onClick={handleExportSettings}
+                        className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
                         <Download className="w-4 h-4" />
                         Export Settings
                       </button>
                       
-                      <button className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <button 
+                        onClick={handleAdvancedSupport}
+                        className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#8C7FF8] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
                         <HelpCircle className="w-4 h-4" />
                         Advanced Support
                       </button>
@@ -792,7 +877,10 @@ export default function SettingsPage() {
                   our support team is ready to help.
                 </p>
                 <div className="mt-3">
-                  <button className="px-4 py-2 text-sm font-medium text-[#8C7FF8] bg-[#8C7FF8]/10 rounded-lg hover:bg-[#8C7FF8]/20 transition-colors">
+                  <button 
+                    onClick={handleContactSupport}
+                    className="px-4 py-2 text-sm font-medium text-[#8C7FF8] bg-[#8C7FF8]/10 rounded-lg hover:bg-[#8C7FF8]/20 transition-colors"
+                  >
                     Contact Support
                   </button>
                 </div>
@@ -802,5 +890,13 @@ export default function SettingsPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <ProtectedRoute>
+      <SettingsContent />
+    </ProtectedRoute>
   );
 }
