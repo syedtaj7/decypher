@@ -127,14 +127,38 @@ const platforms = [
   }
 ];
 
-// Gemini API integration
-import { GoogleGenerativeAI } from '@google/generative-ai';
-// Get API key from environment variable
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
-if (!GEMINI_API_KEY) {
-  console.error('Gemini API key is missing. Please add NEXT_PUBLIC_GEMINI_API_KEY to your .env.local file.');
-}
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+// Mock Instagram Analysis Data
+const mockInstagramAnalysis: AnalysisResult = {
+  summary: "Instagram's Terms of Service outline user rights, content policies, data collection practices, and platform rules with significant implications for privacy and content ownership.",
+  flowchart: [
+    { id: 1, title: "Account Creation", description: "You must be 13+ years old to create an Instagram account", type: "requirement" },
+    { id: 2, title: "Content Ownership", description: "You retain rights to your content but grant Instagram a license to use it", type: "right" },
+    { id: 3, title: "Data Collection", description: "Instagram collects personal data, device info, and usage patterns", type: "warning" },
+    { id: 4, title: "Content Moderation", description: "Instagram can remove content that violates community guidelines", type: "limitation" },
+    { id: 5, title: "Account Termination", description: "Instagram can suspend or delete accounts for policy violations", type: "warning" },
+    { id: 6, title: "Third-Party Integration", description: "Instagram shares data with Meta companies and partners", type: "info" }
+  ],
+  risks: [
+    { title: "Data Privacy", level: "High", description: "Your personal data is used for targeted advertising and may be shared with third parties" },
+    { title: "Content Rights", level: "Medium", description: "Instagram gains broad license to use your content for promotional purposes" },
+    { title: "Account Control", level: "Medium", description: "Instagram can terminate your account without prior notice for policy violations" },
+    { title: "Data Retention", level: "Low", description: "Your data may be retained even after account deletion for legal compliance" }
+  ],
+  dos: [
+    "Review and adjust your privacy settings regularly",
+    "Be mindful of what personal information you share",
+    "Report inappropriate content or behavior",
+    "Keep your account secure with strong passwords",
+    "Read community guidelines to avoid violations"
+  ],
+  donts: [
+    "Don't share sensitive personal information in posts",
+    "Don't post content that violates community standards",
+    "Don't create fake accounts or impersonate others",
+    "Don't engage in harassment or bullying",
+    "Don't ignore privacy setting updates and notifications"
+  ]
+};
 
 interface AnalysisResult {
   summary: string;
@@ -164,145 +188,42 @@ interface AnalysisResult {
   }[];
 }
 
-async function analyzePdfWithGemini(pdfUrl: string, platformName: string): Promise<AnalysisResult | null> {
+async function analyzePdfWithMockData(pdfUrl: string, platformName: string): Promise<AnalysisResult | null> {
   try {
-    // For demo purposes, we'll create a prompt to analyze terms and conditions
-    // In a real implementation, you would extract text from the PDF and send it to Gemini
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
     
-    // Create the Gemini model instance
-    // Using the correct model ID format for Google Generative AI API
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-    
-    const prompt = `
-    You are an AI legal assistant specialized in analyzing Terms & Conditions documents for ${platformName}.
-    
-    Please analyze the Terms & Conditions for ${platformName} and provide a structured analysis with the following components:
-    
-    1. A concise summary (1-2 sentences) of the main points covered in the terms.
-    
-    2. A flowchart of 6 key points in the document, each with:
-       - A title
-       - A short description
-       - A type (choose from: requirement, right, warning, limitation, info)
-    
-    3. List 4 potential risks for users, each with:
-       - A title
-       - A risk level (High, Medium, or Low)
-       - A short description of the risk
-    
-    4. Five practical recommendations for what users SHOULD do (Dos)
-    
-    5. Five practical recommendations for what users SHOULD NOT do (Don'ts)
-    
-    Format your response as a structured JSON object with these exact fields:
-    {
-      "summary": "string",
-      "flowchart": [
-        {
-          "id": number,
-          "title": "string",
-          "description": "string", 
-          "type": "string"
-        }
-      ],
-      "risks": [
-        {
-          "title": "string",
-          "level": "string",
-          "description": "string"
-        }
-      ],
-      "dos": ["string"],
-      "donts": ["string"]
-    }
-    `;
-
-    // Generate content using the model
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const textResponse = response.text();
-    
-    // Parse the JSON response - we extract the JSON part in case the model returns any extra text
-    const jsonMatch = textResponse.match(/{[\s\S]*}/);
-    if (!jsonMatch) {
-      throw new Error('Failed to get JSON response from Gemini API');
+    // Return mock analysis for Instagram or default data
+    if (platformName.toLowerCase().includes('instagram')) {
+      return mockInstagramAnalysis;
     }
     
-    // Define types for the JSON response
-    interface FlowchartItem {
-      id?: number;
-      title: string;
-      description: string;
-      type: string;
-    }
-    
-    interface RiskItem {
-      title: string;
-      level: string;
-      description: string;
-    }
-    
-    interface GeminiResponse {
-      summary: string;
-      flowchart: FlowchartItem[];
-      risks: RiskItem[];
-      dos: string[];
-      donts: string[];
-    }
-    
-    const jsonResponse = JSON.parse(jsonMatch[0]) as GeminiResponse;
-    
-    // Map the response to our AnalysisResult interface
+    // Default mock response for other platforms
     return {
-      summary: jsonResponse.summary,
-      flowchart: jsonResponse.flowchart.map((item, index) => ({
-        ...item,
-        id: item.id || index + 1 // Ensure ID exists
-      })),
-      risks: jsonResponse.risks,
-      dos: jsonResponse.dos,
-      donts: jsonResponse.donts
-    };
-
-  } catch (error) {
-    console.error("Error analyzing PDF with Gemini:", error);
-    
-    // Show the specific error to help with debugging
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Gemini API Error: ${errorMessage}`);
-    
-    // Return fallback data so the application doesn't break
-    return {
-      summary: `${platformName}'s terms outline user rights, content ownership, data collection practices, and community guidelines with important privacy implications.`,
+      summary: `${platformName}'s Terms of Service contain standard platform provisions with moderate complexity and typical social media platform requirements.`,
       flowchart: [
-        { id: 1, title: "Account Creation", description: `You must be 13+ years old to create a ${platformName} account`, type: "requirement" },
-        { id: 2, title: "Content Ownership", description: "You retain rights to your content but grant a license to the platform", type: "right" },
-        { id: 3, title: "Data Collection", description: `${platformName} collects personal data, device information, and usage patterns`, type: "warning" },
-        { id: 4, title: "Content Moderation", description: "Platform can remove content that violates guidelines", type: "limitation" },
-        { id: 5, title: "Account Termination", description: "Platform can suspend accounts for violations", type: "warning" },
-        { id: 6, title: "Third-Party Services", description: `${platformName} integrates with third-party services that may collect data`, type: "info" }
+        { id: 1, title: "Service Agreement", description: `User accepts ${platformName} Terms of Service`, type: "requirement" },
+        { id: 2, title: "Platform Usage", description: "User interacts with platform features and services", type: "info" },
+        { id: 3, title: "Data Processing", description: "Platform processes user data according to privacy policy", type: "warning" },
+        { id: 4, title: "Account Status", description: "Account remains active while following platform guidelines", type: "right" }
       ],
       risks: [
-        { title: "Data Privacy", level: "High", description: "Your personal data may be used for targeted advertising" },
-        { title: "Content Rights", level: "Medium", description: `${platformName} gains non-exclusive license to your content` },
-        { title: "Account Control", level: "Medium", description: "Platform can terminate accounts at their discretion" },
-        { title: "Data Retention", level: "Low", description: "Data may be stored even after account deletion" }
+        { title: "Standard Data Collection", level: "Medium", description: "Platform collects user data for service improvement and analytics." }
       ],
       dos: [
-        "Read privacy settings carefully and adjust accordingly",
-        "Keep personal information private when possible",
-        "Report inappropriate content or behavior",
-        "Use strong, unique passwords for your account",
-        "Review third-party app permissions regularly"
+        "Review terms periodically",
+        "Understand your rights and obligations", 
+        "Monitor privacy settings"
       ],
       donts: [
-        "Don't share sensitive personal information publicly",
-        "Don't post content that violates community guidelines",
-        "Don't create fake accounts or impersonate others",
-        "Don't engage in harassment or bullying",
-        "Don't use the platform for illegal activities"
+        "Don't violate community guidelines",
+        "Don't share inappropriate content",
+        "Don't ignore privacy settings"
       ]
     };
+  } catch (error) {
+    console.error("Error in mock analysis:", error);
+    return null;
   }
 }
 
@@ -417,7 +338,7 @@ function DecypherItContent() {
     
     try {
       // Call Gemini API
-      const results = await analyzePdfWithGemini(
+      const results = await analyzePdfWithMockData(
         selectedPlatformData.pdfPath,
         selectedPlatformData.name
       );
