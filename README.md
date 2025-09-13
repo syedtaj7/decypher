@@ -39,7 +39,7 @@ Decypher is an **AI-powered platform** that transforms complex legal, business, 
 
 <img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="500">
 
-**[🌐 Visit Decypher](https://your-demo-link.com)** | **[📖 Documentation](https://github.com/syedtaj7/decypher/wiki)**
+**[🌐 Visit Decypher](https://decypher.vercel.app/)**
 
 </div>
 
