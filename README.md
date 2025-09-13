@@ -200,6 +200,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=18&duration=2000&pause=1000&color=6B57E6&center=true&vCenter=true&width=600&lines=⭐+Star+this+repo+if+you+found+it+helpful!;🚀+Let's+simplify+documents+together!" alt="Typing SVG" />
 
-</div>
-```
+
 
