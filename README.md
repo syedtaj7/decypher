@@ -153,17 +153,7 @@ NEXT_PUBLIC_GA_ID=your_ga_id
 
 </details>
 
-## 📊 Project Stats
 
-<div align="center">
-
-<img src="https://github-readme-stats.vercel.app/api?username=syedtaj7&repo=decypher&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117&title_color=6B57E6&icon_color=6B57E6&text_color=c9d1d9" alt="GitHub Stats">
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=syedtaj7&layout=compact&theme=radical&hide_border=true&bg_color=0D1117&title_color=6B57E6&text_color=c9d1d9" alt="Top Languages">
-
-</div>
-
-## 🤝 Contributing
 
 <img align="right" src="https://user-images.githubusercontent.com/74038190/212284145-bf2c01a8-c448-4f1a-b911-99cc33e58d35.gif" width="200">
 
